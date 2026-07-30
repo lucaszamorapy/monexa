@@ -77,7 +77,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     schema: {
       operationId: "deleteUser",
       tags: ["Usuário"],
-      summary: "Alterar usuário no sistema",
+      summary: "Excluir usuário no sistema",
       response: {
         200: MessageSchemaResponse,
         400: ErrorSchema,

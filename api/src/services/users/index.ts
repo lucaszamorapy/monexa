@@ -213,7 +213,6 @@ export class UsersService {
       updatedAt: GeralService.toBRDate(user.updatedAt),
     }
   }
-
   accessToken(user: IUser) {
     const accessToken = jwt.sign(
       { sub: user.userId, email: user.email },
@@ -223,7 +222,6 @@ export class UsersService {
     return accessToken
   }
   refreshToken(user: IUser) {
-
     const refreshToken = jwt.sign(
       { sub: user.userId },
       JWT_REFRESH_SECRET,
