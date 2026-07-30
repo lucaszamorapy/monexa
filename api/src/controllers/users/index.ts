@@ -188,7 +188,6 @@ export class UsersController {
 
   async sendEmailResetPassword(email: string, reply: FastifyReply) {
     try {
-
       const res = await usersService.sendEmailResetPassword(email);
       return reply.status(200).send(res)
     } catch (error) {

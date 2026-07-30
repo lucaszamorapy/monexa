@@ -5,7 +5,7 @@ import { prisma } from "../../lib/db.js";
 import { GeralService } from "../global/index.js";
 
 export class TransactionsService {
-  async getAllTransactions(dateInitial: Date, dateFinal: Date, token: string): Promise<ITransaction[]> {
+  async getAllTransactions(token: string, dateInitial?: string, dateFinal?: string): Promise<ITransaction[]> {
     const user = await GeralService.getUserFromToken(token);
     const transactions = await prisma.transactions.findMany({
       where: {
