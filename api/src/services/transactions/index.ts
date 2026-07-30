@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IMessageOutputDto } from "../../dto/global/index.js";
 import { ICreateTransactionInputDto, ITransaction, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
 import { CustomError } from "../../errors/index.js";
@@ -25,32 +26,36 @@ export class TransactionsService {
     }
     return transaction;
   }
-  async createTransaction(dto: ICreateTransactionInputDto): Promise<IMessageOutputDto> {
+  async createTransaction(dto: ICreateTransactionInputDto, token: string): Promise<IMessageOutputDto> {
+    const user = await GeralService.getUserFromToken(token);
+    const date = moment(dto.date, "YYYY-MM-DD").toDate();
+
     await prisma.transactions.create({
       data: {
         ...dto,
-        createdAt: GeralService.updateCreatedAt(),
-        updatedAt: GeralService.updateUpdatedAt(),
+        date,
+        userId: user.userId,
       },
     });
     return {
       message: `Transação criada com sucesso!`,
     }
   }
-  async updateTransaction(dto: IUpdateTransactionInputDto): Promise<IMessageOutputDto> {
-    const findTransaction = await prisma.transactions.findFirst({ where: { transactionId: dto.transactionId } })
+  async updateTransaction(dto: IUpdateTransactionInputDto, transactionId: string): Promise<IMessageOutputDto> {
+    const findTransaction = await prisma.transactions.findFirst({ where: { transactionId } })
     if (!findTransaction) {
       throw new CustomError("Transação não encontrada", "NOT_FOUND")
     }
+    const date = moment(dto.date, "YYYY-MM-DD").toDate();
     await prisma.transactions.update({
-      where: { transactionId: dto.transactionId },
+      where: { transactionId: findTransaction.transactionId },
       data: {
         ...dto,
-        updatedAt: GeralService.updateUpdatedAt(),
+        date
       },
     });
     return {
-      message: `Transação criada com sucesso!`,
+      message: `Transação editada com sucesso!`,
     }
   }
   async deleteTransaction(transactionId: string): Promise<IMessageOutputDto> {

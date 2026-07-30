@@ -10,6 +10,7 @@ import fs from "fs";
 import path from "path";
 import { usersRoutes } from './routes/users/index.js';
 import { authPlugin } from './plugins/auth.js';
+import { transactionsRoutes } from './routes/transactions/index.js';
 
 const app = Fastify({
   logger: true
@@ -69,6 +70,7 @@ await app.register(authPlugin)
 
 //Routes
 await app.register(usersRoutes, { prefix: "/users" });
+await app.register(transactionsRoutes, { prefix: "/transactions" });
 
 app.withTypeProvider<ZodTypeProvider>().route({
   method: "GET",

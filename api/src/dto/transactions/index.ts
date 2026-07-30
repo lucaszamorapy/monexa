@@ -5,16 +5,16 @@ export interface ICreateTransactionInputDto {
   type: TransactionType;
   category: TransactionCategory;
   amount: number;
-  date: Date;
+  date: Date | string;
   description: string;
 }
 
 export interface IUpdateTransactionInputDto {
-  transactionId: string;
+  transactionId?: string;
   type: TransactionType;
   category: TransactionCategory;
   amount: number;
-  date: Date;
+  date: Date | string;
   description: string;
 }
 

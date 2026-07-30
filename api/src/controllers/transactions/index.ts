@@ -6,7 +6,7 @@ import { ICreateTransactionInputDto, IUpdateTransactionInputDto } from "../../dt
 
 const transactionService = new TransactionsService();
 
-export class UsersController {
+export class TranscationsController {
   app: FastifyInstance
   constructor(app: FastifyInstance) {
     this.app = app
@@ -67,9 +67,13 @@ export class UsersController {
       });
     }
   }
-  async post(body: ICreateTransactionInputDto, reply: FastifyReply) {
+  async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const res = await transactionService.createTransaction(body);
+      const authorization = req.headers.authorization;
+      const body = req.body
+      if (!authorization) return reply.code(401).send({ error: 'Token não fornecido', code: "UNAUTHORIZED" })
+      const token = authorization.split(" ")[1];
+      const res = await transactionService.createTransaction(body as ICreateTransactionInputDto, token);
       return reply.status(201).send(res)
     } catch (error) {
       this.app.log.error(error);
@@ -92,9 +96,11 @@ export class UsersController {
     }
   }
 
-  async put(body: IUpdateTransactionInputDto, reply: FastifyReply) {
+  async put(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const res = await transactionService.updateTransaction(body);
+      const { id } = req.params as { id: string };
+      const body = req.body
+      const res = await transactionService.updateTransaction(body as IUpdateTransactionInputDto, id);
       return reply.status(200).send(res)
     } catch (error) {
       this.app.log.error(error);

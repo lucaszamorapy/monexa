@@ -28,26 +28,30 @@ enum TransactionCategory {
 
 model Transactions {
   transactionId String   @id @default(uuid())
-  userId String
-  type TransactionType
-  category TransactionCategory
-  amount Float
-  date DateTime @db.Date
-  description String?
-  createdAt DateTime 
-  updatedAt DateTime
-  user       Users    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  userId        String
+  type          TransactionType
+  category      TransactionCategory
+  amount        Float
+  date          DateTime @db.Date
+  description   String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Users {
-  userId    String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  image     String?
-  password  String
+  userId           String   @id @default(uuid())
+  email            String   @unique
+  name             String
+  image            String?
+  password         String
   codeVerification Int?
-  expirationAt DateTime?
-  createdAt DateTime 
-  updatedAt DateTime
+  expirationAt     DateTime?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
   transactions Transactions[]
 }
