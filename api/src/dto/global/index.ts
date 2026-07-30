@@ -15,3 +15,4 @@ export interface GenerateCodeVerificationOutputDto {
 export interface IMessageOutputDto {
   message: string;
 }
+

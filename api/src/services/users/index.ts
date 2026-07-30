@@ -8,8 +8,8 @@ import { GeralService } from "../global/index.js";
 import { MultipartFile } from "@fastify/multipart";
 import { IMessageOutputDto } from "../../dto/global/index.js";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as
+export const JWT_SECRET = process.env.JWT_SECRET as string;
+export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as
   | "3h"
   | number;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
@@ -35,6 +35,8 @@ export class UsersService {
         email: dto.email,
         password: hashedPassword,
         image: null, // temporário
+        createdAt: GeralService.updateCreatedAt(),
+        updatedAt: GeralService.updateUpdatedAt(),
       },
     });
 
@@ -104,6 +106,7 @@ export class UsersService {
       data: {
         ...dto,
         password,
+        updatedAt: GeralService.updateUpdatedAt(),
       },
     });
     return {
@@ -121,7 +124,7 @@ export class UsersService {
 
     await prisma.users.update({
       where: { userId: dto.userId },
-      data: { image: imageUrl },
+      data: { image: imageUrl, updatedAt: GeralService.updateUpdatedAt() },
     });
 
     return {

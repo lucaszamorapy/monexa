@@ -7,6 +7,10 @@ import { CustomError } from "../../errors/index.js";
 import { resetPasswordTemplate } from "../../templates/emails/reset-password.js";
 import { EmailTemplate, GenerateCodeVerificationOutputDto, SendEmailOptions } from "../../dto/global/index.js";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../users/index.js";
+import { IUser } from "../../dto/users/index.js";
+import { prisma } from "../../lib/db.js";
 
 export class GeralService {
   static async uploadFile(params: IUploadFileInputDto): Promise<string> {
@@ -79,5 +83,25 @@ export class GeralService {
       codeVerification,
       expirationAt,
     }
+  }
+  static updateCreatedAt(): string {
+    return moment(new Date()).tz("America/Sao_Paulo").format("yyyy-MM-dd HH:mm:ss");
+  }
+  static updateUpdatedAt(): string {
+    return moment(new Date()).tz("America/Sao_Paulo").format("yyyy-MM-dd HH:mm:ss");
+  }
+  static async getUserFromToken(token: string): Promise<IUser> {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const userId = typeof decoded.sub === "function"
+      ? decoded.sub()
+      : decoded.sub;
+    if (!userId) {
+      throw new CustomError("Token inválido", "BAD_REQUEST");
+    }
+    const user = await prisma.users.findFirst({ where: { userId: userId } });
+    if (!user) {
+      throw new CustomError("Usuário não encontrado", "NOT_FOUND");
+    }
+    return user;
   }
 }
