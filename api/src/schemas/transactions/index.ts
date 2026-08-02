@@ -16,3 +16,22 @@ export const TransactionSchemaUpdate = z.object({
   date: z.string(),
   description: z.string().nullable(),
 })
+
+export const TransactionSchemaGetByIdResponse = z.object({
+  transactionId: z.string(),
+  userId: z.string(),
+  type: z.enum(TransactionType),
+  category: z.enum(TransactionCategory),
+  amount: z.number(),
+  date: z.date(),
+  description: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+export const TransactionSchemaGetAllQuery = z.object({
+  dateInitial: z.string().optional(),
+  dateFinal: z.string().optional(),
+})
+
+export const TransactionSchemaGetAll = z.array(TransactionSchemaGetByIdResponse)

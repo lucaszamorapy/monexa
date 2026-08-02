@@ -8,9 +8,16 @@ import { GeralService } from "../global/index.js";
 export class TransactionsService {
   async getAllTransactions(token: string, dateInitial?: string, dateFinal?: string): Promise<ITransaction[]> {
     const user = await GeralService.getUserFromToken(token);
+    const dateFilter: { gte?: Date; lte?: Date } = {};
+    if (dateInitial) dateFilter.gte = moment(dateInitial, "YYYY-MM-DD").toDate();
+    if (dateFinal) dateFilter.lte = moment(dateFinal, "YYYY-MM-DD").toDate();
+    if (Object.keys(dateFilter).length > 0 && dateFilter.gte && dateFilter.lte && dateFilter.gte > dateFilter.lte) {
+      throw new CustomError("A data inicial não pode ser maior que a data final", "BAD_REQUEST")
+    }
+
     const transactions = await prisma.transactions.findMany({
       where: {
-        date: { gte: dateInitial, lte: dateFinal },
+        date: dateFilter,
         userId: user.userId,
       },
       orderBy: {
