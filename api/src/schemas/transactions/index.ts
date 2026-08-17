@@ -1,9 +1,10 @@
 import z from "zod"
-import { TransactionCategory, TransactionType } from "../../generated/prisma/enums.js"
+import { TransactionCategory, TransactionSituation, TransactionType } from "../../generated/prisma/enums.js"
 
 export const TransactionSchemaCreate = z.object({
   type: z.enum(TransactionType),
   category: z.enum(TransactionCategory),
+  situation: z.enum(TransactionSituation),
   amount: z.number(),
   date: z.string(),
   description: z.string().nullable(),
@@ -12,6 +13,7 @@ export const TransactionSchemaCreate = z.object({
 export const TransactionSchemaUpdate = z.object({
   type: z.enum(TransactionType),
   category: z.enum(TransactionCategory),
+  situation: z.enum(TransactionSituation),
   amount: z.number(),
   date: z.string(),
   description: z.string().nullable(),
@@ -21,6 +23,7 @@ export const TransactionSchemaGetByIdResponse = z.object({
   transactionId: z.string(),
   userId: z.string(),
   type: z.enum(TransactionType),
+  situation: z.enum(TransactionSituation),
   category: z.enum(TransactionCategory),
   amount: z.number(),
   date: z.date(),

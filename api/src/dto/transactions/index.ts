@@ -1,9 +1,10 @@
-import { TransactionCategory, TransactionType } from "../../generated/prisma/enums.js";
+import { TransactionCategory, TransactionSituation, TransactionType } from "../../generated/prisma/enums.js";
 
 export interface ICreateTransactionInputDto {
   userId: string;
   type: TransactionType;
   category: TransactionCategory;
+  situation: TransactionSituation
   amount: number;
   date: Date | string;
   description: string;

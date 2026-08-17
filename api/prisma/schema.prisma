@@ -26,6 +26,11 @@ enum TransactionCategory {
   Investimentos
 }
 
+enum TransactionSituation {
+  Pago
+  Pendente
+}
+
 model Transactions {
   transactionId String   @id @default(uuid())
   userId        String
@@ -34,7 +39,7 @@ model Transactions {
   amount        Float
   date          DateTime @db.Date
   description   String?
-
+  situation     TransactionSituation
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
