@@ -20,33 +20,77 @@ export class TransactionsService {
         date: dateFilter,
         userId: user.userId,
       },
-      orderBy: {
-        date: "desc",
-      },
+      orderBy: [
+        {
+          date: "desc",
+        },
+        {
+          installmentNumber: "asc",
+        },
+      ],
+      include: {
+        father: true,
+        children: true,
+      }
     });
     return transactions;
   }
   async getTransactionById(transactionId: string): Promise<ITransaction> {
-    const transaction = await prisma.transactions.findFirst({ where: { transactionId: transactionId } })
+    const transaction = await prisma.transactions.findFirst({
+      where: { transactionId: transactionId }, include: {
+        father: true,
+        children: true,
+      }
+    })
     if (!transaction) {
       throw new CustomError("Transação não encontrada", "NOT_FOUND")
     }
     return transaction;
   }
-  async createTransaction(dto: ICreateTransactionInputDto, token: string): Promise<IMessageOutputDto> {
+  async createTransaction(
+    dto: ICreateTransactionInputDto,
+    token: string
+  ): Promise<IMessageOutputDto> {
     const user = await GeralService.getUserFromToken(token);
+
     const date = moment(dto.date, "YYYY-MM-DD").toDate();
 
-    await prisma.transactions.create({
-      data: {
-        ...dto,
-        date,
-        userId: user.userId,
-      },
-    });
-    return {
-      message: `Transação criada com sucesso!`,
+    if (dto.installment && dto.installment > 1) {
+      let transactionFatherId: string | null = null;
+
+      for (
+        let installment = 1;
+        installment <= dto.installment;
+        installment++
+      ) {
+        const transaction: ITransaction = await prisma.transactions.create({
+          data: {
+            ...dto,
+            installmentNumber: installment,
+            date,
+            transactionFatherId,
+            amount: dto.amount / dto.installment,
+            totalAmountIntallment: dto.amount,
+            userId: user.userId,
+          },
+        });
+        if (installment === 1) {
+          transactionFatherId = transaction.transactionId;
+        }
+      }
+    } else {
+      await prisma.transactions.create({
+        data: {
+          ...dto,
+          date,
+          userId: user.userId,
+        },
+      });
     }
+
+    return {
+      message: "Transação criada com sucesso!",
+    };
   }
   async updateTransaction(dto: IUpdateTransactionInputDto, transactionId: string): Promise<IMessageOutputDto> {
     const findTransaction = await prisma.transactions.findFirst({ where: { transactionId } })

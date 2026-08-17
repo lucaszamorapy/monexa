@@ -31,32 +31,44 @@ enum TransactionSituation {
   Pendente
 }
 
-model Transactions {
-  transactionId String   @id @default(uuid())
-  userId        String
-  type          TransactionType
-  category      TransactionCategory
-  amount        Float
-  date          DateTime @db.Date
-  description   String?
-  situation     TransactionSituation
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+enum TransactionPaymentMethod {
+  Pix
+  Débito
+  Crédito
+}
 
-  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+model Transactions {
+  transactionId       String                   @id @default(uuid())
+  userId              String
+  transactionFatherId String?
+  type                TransactionType
+  paymentMethod       TransactionPaymentMethod
+  category            TransactionCategory
+  amount              Float
+  totalAmountIntallment Float?
+  installment         Int?
+  installmentNumber   Int?
+  date                DateTime                 @db.Date
+  description         String?
+  situation           TransactionSituation
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  user                Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  father              Transactions?            @relation("TransactionHierarchy", fields: [transactionFatherId], references: [transactionId], onDelete: Cascade)
+  children            Transactions[]           @relation("TransactionHierarchy")
 }
 
 model Users {
-  userId           String   @id @default(uuid())
-  email            String   @unique
+  userId           String    @id @default(uuid())
+  email            String    @unique
   name             String
   image            String?
   password         String
   codeVerification Int?
   expirationAt     DateTime?
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   transactions Transactions[]
 }
