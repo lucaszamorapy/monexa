@@ -9,6 +9,7 @@ export const createUser = async (body: FormData): Promise<IAuthResponse> => {
 }
 
 export const refreshApiToken = async (): Promise<IAuthResponse> => {
-  const token = await api.get("auth/refresh-token")
-  return token as IAuthResponse;
-}
+  // Sem `token` na options: o Bearer vem do getServerToken / withBearerToken
+  const token = await api.get<IAuthResponse>("users/auth/refresh-token");
+  return token;
+};

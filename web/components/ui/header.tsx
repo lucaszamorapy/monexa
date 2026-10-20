@@ -1,4 +1,3 @@
-"use server";
 import { Button } from "./button";
 import { GalleryVerticalEndIcon, LogOut, User } from "lucide-react";
 import { auth, signOut } from "@/auth";

@@ -2,16 +2,23 @@ import NextAuth from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
-import { api, decodeJwt } from "./app/utils/functions";
-import { IAuthResponse } from "./app/utils/types/users";
+import { api, decodeJwt, withBearerToken } from "./app/utils/functions";
 import { refreshApiToken } from "./app/_actions/auth";
+import { IAuthResponse } from "./app/utils/types/users";
 
 // Map to prevent simultaneous in-flight refresh calls for the same token
 const refreshLocks = new Map<string, Promise<JWT>>();
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
+  if (!token.refreshToken) {
+    return { ...token, error: "RefreshTokenError" };
+  }
+
   try {
-    const refreshed = await refreshApiToken();
+    // Escopo com refreshToken no Bearer — api.get sem passar token e sem reentrar em auth()
+    const refreshed = await withBearerToken(token.refreshToken, () =>
+      refreshApiToken()
+    );
     const decoded = decodeJwt(refreshed.accessToken);
 
     const expiresAt =
@@ -130,12 +137,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
-      // 3. If access token is still valid (with 60-second safety margin)
-      if (Date.now() < token.accessTokenExpires - 60 * 1000) {
+      // 3. Already failed refresh — don't retry on every auth() call
+      if (token.error === "RefreshTokenError") {
         return token;
       }
 
-      // 4. Access token has expired, refresh it automatically
+      // 4. If access token is still valid (with 60-second safety margin)
+      const expiresAt = token.accessTokenExpires;
+      if (
+        typeof expiresAt === "number" &&
+        Date.now() < expiresAt - 60 * 1000
+      ) {
+        return token;
+      }
+
+      // 5. Access token has expired (or expiry unknown), refresh it
       return refreshAccessTokenWithLock(token);
     },
 

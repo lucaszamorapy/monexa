@@ -4,9 +4,7 @@ import { NextResponse } from "next/server";
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth?.user && req.auth?.error !== "RefreshTokenError";
-  const isPublicRoute =
-    nextUrl.pathname === "/auth/login" ||
-    nextUrl.pathname === "/auth/signup";
+  const isPublicRoute = nextUrl.pathname.startsWith("/auth");
 
   if (isPublicRoute) {
     if (isLoggedIn) {
