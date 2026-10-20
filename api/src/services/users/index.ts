@@ -35,8 +35,6 @@ export class UsersService {
         email: dto.email,
         password: hashedPassword,
         image: null, // temporário
-        createdAt: GeralService.updateCreatedAt(),
-        updatedAt: GeralService.updateUpdatedAt(),
       },
     });
 
@@ -106,7 +104,6 @@ export class UsersService {
       data: {
         ...dto,
         password,
-        updatedAt: GeralService.updateUpdatedAt(),
       },
     });
     return {
@@ -124,7 +121,7 @@ export class UsersService {
 
     await prisma.users.update({
       where: { userId: dto.userId },
-      data: { image: imageUrl, updatedAt: GeralService.updateUpdatedAt() },
+      data: { image: imageUrl, },
     });
 
     return {

@@ -1,0 +1,158 @@
+import NextAuth from "next-auth";
+import type { JWT } from "next-auth/jwt";
+import Credentials from "next-auth/providers/credentials";
+import { authConfig } from "./auth.config";
+import { api, decodeJwt } from "./app/utils/functions";
+import { IAuthResponse } from "./app/utils/types/users";
+import { refreshApiToken } from "./app/_actions/auth";
+
+// Map to prevent simultaneous in-flight refresh calls for the same token
+const refreshLocks = new Map<string, Promise<JWT>>();
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+  try {
+    const refreshed = await refreshApiToken();
+    const decoded = decodeJwt(refreshed.accessToken);
+
+    const expiresAt =
+      typeof decoded.exp === "number"
+        ? decoded.exp * 1000
+        : Date.now() + 3 * 60 * 60 * 1000;
+
+    return {
+      ...token,
+      accessToken: refreshed.accessToken,
+      refreshToken: refreshed.refreshToken || token.refreshToken,
+      accessTokenExpires: expiresAt,
+      user: {
+        id: refreshed.userId || token.user?.id || (token.sub as string),
+        name: refreshed.name || token.user?.name || "",
+        email: refreshed.email || token.user?.email || "",
+        image: refreshed.image !== undefined ? refreshed.image : token.user?.image,
+      },
+      error: undefined,
+    };
+  } catch (error) {
+    console.error("Erro ao renovar access token:", error);
+    return {
+      ...token,
+      error: "RefreshTokenError",
+    };
+  }
+}
+
+async function refreshAccessTokenWithLock(token: JWT): Promise<JWT> {
+  const key = token.refreshToken;
+  if (!key) {
+    return { ...token, error: "RefreshTokenError" };
+  }
+
+  const existingLock = refreshLocks.get(key);
+  if (existingLock) {
+    return existingLock;
+  }
+
+  const refreshPromise = refreshAccessToken(token).finally(() => {
+    refreshLocks.delete(key);
+  });
+
+  refreshLocks.set(key, refreshPromise);
+  return refreshPromise;
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
+  providers: [
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "E-mail", type: "email" },
+        password: { label: "Senha", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        try {
+          const res = await api.post<IAuthResponse>("users/auth/login", {
+            email: credentials.email,
+            password: credentials.password,
+          });
+
+          if (!res || !res.accessToken) {
+            return null;
+          }
+
+          return {
+            ...res,
+            id: res.userId,
+            message: res.message
+          };
+        } catch (error) {
+          console.error("Falha no login (authorize):", error);
+          return null;
+        }
+      },
+    }),
+  ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async jwt({ token, user, trigger, session }) {
+      // 1. Initial sign-in: capture user and tokens
+      if (user) {
+        const decoded = decodeJwt(user.accessToken);
+        const expiresAt =
+          typeof decoded.exp === "number"
+            ? decoded.exp * 1000
+            : Date.now() + 3 * 60 * 60 * 1000;
+
+        return {
+          ...token,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          accessTokenExpires: expiresAt,
+          user: {
+            id: user.id,
+            name: user.name || "",
+            email: user.email || "",
+            image: user.image || null,
+          },
+        };
+      }
+
+      // 2. Explicit session update (e.g. user updated profile)
+      if (trigger === "update" && session) {
+        token.user = {
+          ...token.user,
+          ...session.user,
+        };
+        return token;
+      }
+
+      // 3. If access token is still valid (with 60-second safety margin)
+      if (Date.now() < token.accessTokenExpires - 60 * 1000) {
+        return token;
+      }
+
+      // 4. Access token has expired, refresh it automatically
+      return refreshAccessTokenWithLock(token);
+    },
+
+    async session({ session, token }) {
+      if (token.user) {
+        session.user = {
+          ...session.user,
+          id: token.user.id,
+          name: token.user.name,
+          email: token.user.email,
+          image: token.user.image,
+        };
+      }
+      session.accessToken = token.accessToken;
+      session.error = token.error;
+
+      return session;
+    },
+  },
+});
