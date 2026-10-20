@@ -1,16 +1,20 @@
 import moment from "moment";
 import { IMessageOutputDto } from "../../dto/global/index.js";
-import { ICreateTransactionInputDto, ITransaction, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
+import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, ITransaction, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
 import { CustomError } from "../../errors/index.js";
 import { prisma } from "../../lib/db.js";
 import { GeralService } from "../global/index.js";
 
 export class TransactionsService {
-  async getAllTransactions(token: string, dateInitial?: string, dateFinal?: string): Promise<ITransaction[]> {
+  async getAllTransactions(token: string, dto: IGetAllTransactionsInputDto): Promise<ITransaction[]> {
     const user = await GeralService.getUserFromToken(token);
     const dateFilter: { gte?: Date; lte?: Date } = {};
-    if (dateInitial) dateFilter.gte = moment(dateInitial, "YYYY-MM-DD").toDate();
-    if (dateFinal) dateFilter.lte = moment(dateFinal, "YYYY-MM-DD").toDate();
+    if (dto.dateInitial) {
+      dateFilter.gte = moment(dto.dateInitial, "YYYY-MM-DD").toDate();
+    }
+    if (dto.dateFinal) {
+      dateFilter.lte = moment(dto.dateFinal, "YYYY-MM-DD").toDate();
+    }
     if (Object.keys(dateFilter).length > 0 && dateFilter.gte && dateFilter.lte && dateFilter.gte > dateFilter.lte) {
       throw new CustomError("A data inicial não pode ser maior que a data final", "BAD_REQUEST")
     }
@@ -19,6 +23,10 @@ export class TransactionsService {
       where: {
         date: dateFilter,
         userId: user.userId,
+        ...(dto.type && { type: dto.type }),
+        ...(dto.category && { category: dto.category }),
+        ...(dto.paymentMethod && { paymentMethod: dto.paymentMethod }),
+        ...(dto.situation && { situation: dto.situation }),
       },
       orderBy: [
         {

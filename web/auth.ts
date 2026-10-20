@@ -2,9 +2,10 @@ import NextAuth from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import Credentials from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
-import { api, decodeJwt, withBearerToken } from "./app/utils/functions";
 import { refreshApiToken } from "./app/_actions/auth";
 import { IAuthResponse } from "./app/utils/types/users";
+import { decodeJwt, withBearerToken } from "./app/utils/functions/auth";
+import { Request } from "./app/utils/class/api";
 
 // Map to prevent simultaneous in-flight refresh calls for the same token
 const refreshLocks = new Map<string, Promise<JWT>>();
@@ -80,12 +81,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
-        try {
-          const res = await api.post<IAuthResponse>("users/auth/login", {
+        const api = new Request("users/auth/login", {
+          body: {
             email: credentials.email,
             password: credentials.password,
-          });
+          }
+        });
+        try {
+          const res = await api.post<IAuthResponse>();
 
           if (!res || !res.accessToken) {
             return null;

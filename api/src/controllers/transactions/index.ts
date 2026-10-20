@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { CustomError } from "../../errors/index.js";
 import { FastifyReply } from "fastify"
 import { TransactionsService } from "../../services/transactions/index.js";
-import { ICreateTransactionInputDto, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
+import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
 
 const transactionService = new TransactionsService();
 
@@ -16,11 +16,8 @@ export class TranscationsController {
       const authorization = req.headers.authorization;
       if (!authorization) return reply.code(401).send({ error: 'Token não fornecido', code: "UNAUTHORIZED" })
       const token = authorization.split(" ")[1];
-      const { dateInitial, dateFinal } = req.query as {
-        dateInitial?: string;
-        dateFinal?: string;
-      };
-      const res = await transactionService.getAllTransactions(token, dateInitial, dateFinal);
+      const query = req.query as IGetAllTransactionsInputDto;
+      const res = await transactionService.getAllTransactions(token, query);
       return reply.status(200).send(res)
     } catch (error) {
       this.app.log.error(error);

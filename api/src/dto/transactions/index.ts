@@ -1,5 +1,14 @@
 import { TransactionCategory, TransactionPaymentMethod, TransactionSituation, TransactionType } from "../../generated/prisma/enums.js";
 
+export interface IGetAllTransactionsInputDto {
+  dateInitial?: string | null;
+  dateFinal?: string | null;
+  type?: TransactionType | null;
+  category?: TransactionCategory | null;
+  paymentMethod?: TransactionPaymentMethod | null;
+  situation?: TransactionSituation | null;
+}
+
 export interface ICreateTransactionInputDto {
   userId: string;
   type: TransactionType;

@@ -57,6 +57,10 @@ export const TransactionSchemaGetByIdResponse =
 export const TransactionSchemaGetAllQuery = z.object({
   dateInitial: z.string().optional(),
   dateFinal: z.string().optional(),
+  type: z.enum(TransactionType).nullable().optional(),
+  category: z.enum(TransactionCategory).nullable().optional(),
+  paymentMethod: z.enum(TransactionPaymentMethod).nullable().optional(),
+  situation: z.enum(TransactionSituation).nullable().optional(),
 })
 
 export const TransactionSchemaGetAll = z.array(TransactionSchemaGetByIdResponse)

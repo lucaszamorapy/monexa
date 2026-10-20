@@ -5,3 +5,8 @@ export type FetchOptions = Omit<RequestInit, "body" | "method"> & {
   params?: QueryParams;
   token?: string | null;
 };
+
+export interface IApiError {
+  error: string;
+  code: string;
+}
