@@ -1,5 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
-import { refreshApiToken } from "./app/_actions/auth";
+import { refreshApiToken } from "./app/_actions/users";
 import { decodeJwt } from "./app/utils/functions/auth";
 
 export const authConfig: NextAuthConfig = {

@@ -124,10 +124,35 @@
   body {
     @apply bg-background text-foreground;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
   html {
     @apply font-sans;
+  }
+}
+
+@keyframes monexa-loader {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.97);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-monexa-loader {
+  animation: monexa-loader 2.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-monexa-loader {
+    animation: none;
   }
 }

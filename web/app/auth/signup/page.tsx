@@ -1,28 +1,22 @@
-import {
-  GalleryVerticalEndIcon,
-  ShieldCheck,
-  TrendingUp,
-  WalletCards,
-} from "lucide-react";
+import { ShieldCheck, TrendingUp, WalletCards } from "lucide-react";
 import SignupForm from "./components/signup-form";
-import Link from "next/link";
 import { Suspense } from "react";
+import Loader from "@/components/ui/loader";
+import Image from "next/image";
 
 const SignupPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-medium">
-            <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <GalleryVerticalEndIcon className="size-4" />
-            </div>
-            Monexa
-          </Link>
-        </div>
+        <Image
+          src={"/images/logo-prin-black.png"}
+          width={110}
+          height={110}
+          alt="Logo Monexa"
+        />
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <Suspense fallback={<div>Carregando...</div>}>
+            <Suspense fallback={<Loader />}>
               <SignupForm />
             </Suspense>
           </div>
@@ -31,8 +25,12 @@ const SignupPage = () => {
 
       <div className="relative hidden bg-zinc-950 p-10 text-white lg:flex lg:flex-col lg:justify-between dark:border-l border-zinc-800">
         <div className="flex items-center gap-2 text-lg font-medium">
-          <GalleryVerticalEndIcon className="size-6" />
-          <span>Monexa Finance</span>
+          <Image
+            src={"/images/logo-prin-white.png"}
+            width={110}
+            height={110}
+            alt="Logo Monexa"
+          />
         </div>
 
         <div className="space-y-6">

@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
-import { createUser } from "@/app/_actions/auth";
+import { createUser } from "@/app/_actions/users";
 import { useRouter } from "next/navigation";
 import { toFormData } from "@/app/utils/functions/global";
 
