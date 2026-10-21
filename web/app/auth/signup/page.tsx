@@ -35,38 +35,38 @@ const SignupPage = () => {
 
         <div className="space-y-6">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur">
-            <div className="flex items-center gap-3 text-emerald-400 mb-2 font-medium">
-              <TrendingUp className="size-5" />
+            <TrendingUp className="size-5 text-primary mb-2" />
+            <h4 className="font-semibold text-white">
               Controle Total das Suas Finanças
-            </div>
-            <p className="text-sm text-zinc-400">
+            </h4>
+            <span className=" text-zinc-400">
               Cadastre-se para gerenciar despesas, receitas, orçamentos e
               cartões em um só lugar com alta segurança.
-            </p>
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <ShieldCheck className="size-5 text-primary mb-2" />
-              <h3 className="font-semibold text-sm">Privacidade Total</h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <h4 className="font-semibold">Privacidade Total</h4>
+              <span className="text-zinc-400 mt-1">
                 Seus dados financeiros protegidos por criptografia de ponta a
                 ponta.
-              </p>
+              </span>
             </div>
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <WalletCards className="size-5 text-primary mb-2" />
-              <h3 className="font-semibold text-sm">Organização Simples</h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <h4 className="font-semibold">Organização Simples</h4>
+              <span className="text-zinc-400 mt-1">
                 Categorização automática e relatórios de fluxo de caixa.
-              </p>
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="text-xs text-zinc-500">
+        <small className="text-zinc-500">
           © 2026 Monexa. Todos os direitos reservados.
-        </div>
+        </small>
       </div>
     </div>
   );

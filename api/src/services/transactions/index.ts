@@ -61,40 +61,48 @@ export class TransactionsService {
   ): Promise<IMessageOutputDto> {
     const user = await GeralService.getUserFromToken(token);
 
-    const date = moment(dto.date, "YYYY-MM-DD").toDate();
+    const baseDate = moment(dto.date, "YYYY-MM-DD");
 
-    if (dto.installment && dto.installment > 1) {
-      let transactionFatherId: string | null = null;
+    await prisma.$transaction(async (tx) => {
+      if (dto.installment && dto.installment > 1) {
+        let transactionFatherId: string | null = null;
 
-      for (
-        let installment = 1;
-        installment <= dto.installment;
-        installment++
-      ) {
-        const transaction: ITransaction = await prisma.transactions.create({
+        for (
+          let installment = 1;
+          installment <= dto.installment;
+          installment++
+        ) {
+          const installmentDate = baseDate
+            .clone()
+            .add(installment - 1, "months")
+            .toDate();
+
+          const transaction: ITransaction = await tx.transactions.create({
+            data: {
+              ...dto,
+              installmentNumber: installment,
+              date: installmentDate,
+              transactionFatherId,
+              amount: dto.amount / dto.installment,
+              totalAmountIntallment: dto.amount,
+              userId: user.userId,
+            },
+          });
+
+          if (installment === 1) {
+            transactionFatherId = transaction.transactionId;
+          }
+        }
+      } else {
+        await tx.transactions.create({
           data: {
             ...dto,
-            installmentNumber: installment,
-            date,
-            transactionFatherId,
-            amount: dto.amount / dto.installment,
-            totalAmountIntallment: dto.amount,
+            date: baseDate.toDate(),
             userId: user.userId,
           },
         });
-        if (installment === 1) {
-          transactionFatherId = transaction.transactionId;
-        }
       }
-    } else {
-      await prisma.transactions.create({
-        data: {
-          ...dto,
-          date,
-          userId: user.userId,
-        },
-      });
-    }
+    });
 
     return {
       message: "Transação criada com sucesso!",

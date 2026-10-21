@@ -14,3 +14,9 @@ export const refreshApiToken = async (token: string): Promise<IAuthResponse> => 
   const newToken = await api.get<IAuthResponse>();
   return newToken;
 };
+
+export const forgotPasswordEmail = async (email: string): Promise<{ message: string }> => {
+  const api = new Request("users/auth/send-email-reset-password", { body: { email } })
+  const res = await api.post<{ message: string }>();
+  return res;
+}

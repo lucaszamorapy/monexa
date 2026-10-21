@@ -62,8 +62,6 @@ const SignupForm = () => {
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
-      } else {
-        toast.error("Ocorreu um erro ao criar a conta.");
       }
     }
   };
@@ -77,10 +75,10 @@ const SignupForm = () => {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Crie sua conta</h1>
-            <p className="text-sm text-balance text-muted-foreground">
+            <h1>Crie sua conta</h1>
+            <span className="text-muted-foreground">
               Preencha o formulário abaixo para começar
-            </p>
+            </span>
           </div>
 
           <Controller

@@ -15,10 +15,10 @@ export interface ICreateTransactionInputDto {
   category: TransactionCategory;
   situation: TransactionSituation;
   paymentMethod: TransactionPaymentMethod;
-  installment: number | null;
-  installmentNumber?: number | null;
+  installment: number | null; //quantidade de parcelas
+  installmentNumber: number | null; //numero da parcela
   amount: number;
-  totalAmountIntallment?: number | null;
+  totalAmountIntallment: number | null; //valor total das parcelas
   date: Date | string;
   description: string;
 }

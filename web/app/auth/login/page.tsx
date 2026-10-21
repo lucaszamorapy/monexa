@@ -35,39 +35,39 @@ const LoginPage = () => {
 
         <div className="space-y-6">
           <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-6 backdrop-blur">
-            <div className="flex items-center gap-3 text-emerald-400 mb-2 font-medium">
-              <TrendingUp className="size-5" />
+            <TrendingUp className="size-5 text-primary mb-2" />
+            <h4 className="font-semibold text-white">
               Controle Total das Suas Finanças
-            </div>
-            <p className="text-sm text-zinc-400">
+            </h4>
+            <span className=" text-zinc-400">
               Acompanhe entradas, despesas, parcelamentos e tenha uma visão
               clara do seu futuro financeiro em tempo real.
-            </p>
+            </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <ShieldCheck className="size-5 text-primary mb-2" />
-              <h3 className="font-semibold text-sm">Segurança Máxima</h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <h4 className="font-semibold">Segurança Máxima</h4>
+              <span className="text-zinc-400 mt-1">
                 Sessões protegidas com tokens criptografados e renovação
                 automática.
-              </p>
+              </span>
             </div>
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <WalletCards className="size-5 text-primary mb-2" />
-              <h3 className="font-semibold text-sm">Gestão de Parcelas</h3>
-              <p className="text-xs text-zinc-400 mt-1">
+              <h4 className="font-semibold">Gestão de Parcelas</h4>
+              <span className="text-zinc-400 mt-1">
                 Controle intuitivo de cartões, Pix, débito e cobranças
                 recorrentes.
-              </p>
+              </span>
             </div>
           </div>
         </div>
 
-        <div className="text-xs text-zinc-500">
+        <small className="text-zinc-500">
           © 2026 Monexa. Todos os direitos reservados.
-        </div>
+        </small>
       </div>
     </div>
   );

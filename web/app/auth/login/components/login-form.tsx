@@ -57,7 +57,7 @@ const LoginForm = () => {
       router.refresh();
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(`Ocorreu um erro ao tentar entrar. ${error}.`);
+        toast.error(error.message);
       }
     }
   };
@@ -70,10 +70,10 @@ const LoginForm = () => {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Acesse sua conta</h1>
-            <p className="text-sm text-balance text-muted-foreground">
+            <h1>Acesse sua conta</h1>
+            <span className="text-muted-foreground">
               Entre com suas credenciais para continuar
-            </p>
+            </span>
           </div>
 
           <Controller
@@ -96,24 +96,29 @@ const LoginForm = () => {
             )}
           />
 
-          <Controller
-            name="password"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="password">Senha</FieldLabel>
-                <PasswordInput
-                  {...field}
-                  id="password"
-                  placeholder="••••••••"
-                  aria-invalid={fieldState.invalid}
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
+          <div className="flex gap-2 flex-col">
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="password">Senha</FieldLabel>
+                  <PasswordInput
+                    {...field}
+                    id="password"
+                    placeholder="••••••••"
+                    aria-invalid={fieldState.invalid}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Button asChild variant="link" className="w-full">
+              <Link href="/auth/forgot-password">Esqueci minha senha</Link>
+            </Button>
+          </div>
 
           <Button
             type="submit"

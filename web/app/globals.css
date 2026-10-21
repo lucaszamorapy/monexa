@@ -121,15 +121,46 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
   html {
     @apply font-sans;
+  }
+
+  h1 {
+    @apply text-3xl font-semibold md:text-4xl;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+  }
+
+  h4 {
+    @apply text-lg font-medium;
+  }
+
+  p {
+    @apply text-base font-normal;
+  }
+
+  small {
+    @apply text-xs font-normal;
+  }
+
+  span {
+    @apply text-sm font-medium;
   }
 }
 
