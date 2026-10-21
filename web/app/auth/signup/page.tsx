@@ -1,9 +1,14 @@
-import { GalleryVerticalEndIcon, ShieldCheck, TrendingUp, WalletCards } from "lucide-react";
+import {
+  GalleryVerticalEndIcon,
+  ShieldCheck,
+  TrendingUp,
+  WalletCards,
+} from "lucide-react";
 import SignupForm from "./components/signup-form";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function SignupPage() {
+const SignupPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -37,7 +42,8 @@ export default function SignupPage() {
               Controle Total das Suas Finanças
             </div>
             <p className="text-sm text-zinc-400">
-              Cadastre-se para gerenciar despesas, receitas, orçamentos e cartões em um só lugar com alta segurança.
+              Cadastre-se para gerenciar despesas, receitas, orçamentos e
+              cartões em um só lugar com alta segurança.
             </p>
           </div>
 
@@ -45,12 +51,17 @@ export default function SignupPage() {
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <ShieldCheck className="size-5 text-primary mb-2" />
               <h3 className="font-semibold text-sm">Privacidade Total</h3>
-              <p className="text-xs text-zinc-400 mt-1">Seus dados financeiros protegidos por criptografia de ponta a ponta.</p>
+              <p className="text-xs text-zinc-400 mt-1">
+                Seus dados financeiros protegidos por criptografia de ponta a
+                ponta.
+              </p>
             </div>
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <WalletCards className="size-5 text-primary mb-2" />
               <h3 className="font-semibold text-sm">Organização Simples</h3>
-              <p className="text-xs text-zinc-400 mt-1">Categorização automática e relatórios de fluxo de caixa.</p>
+              <p className="text-xs text-zinc-400 mt-1">
+                Categorização automática e relatórios de fluxo de caixa.
+              </p>
             </div>
           </div>
         </div>
@@ -61,4 +72,6 @@ export default function SignupPage() {
       </div>
     </div>
   );
-}
+};
+
+export default SignupPage;

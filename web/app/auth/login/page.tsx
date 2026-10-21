@@ -1,9 +1,14 @@
-import { GalleryVerticalEndIcon, WalletCards, ShieldCheck, TrendingUp } from "lucide-react";
+import {
+  GalleryVerticalEndIcon,
+  WalletCards,
+  ShieldCheck,
+  TrendingUp,
+} from "lucide-react";
 import LoginForm from "./components/login-form";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function LoginPage() {
+const LoginPage = () => {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -37,7 +42,8 @@ export default function LoginPage() {
               Controle Total das Suas Finanças
             </div>
             <p className="text-sm text-zinc-400">
-              Acompanhe entradas, despesas, parcelamentos e tenha uma visão clara do seu futuro financeiro em tempo real.
+              Acompanhe entradas, despesas, parcelamentos e tenha uma visão
+              clara do seu futuro financeiro em tempo real.
             </p>
           </div>
 
@@ -45,12 +51,18 @@ export default function LoginPage() {
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <ShieldCheck className="size-5 text-primary mb-2" />
               <h3 className="font-semibold text-sm">Segurança Máxima</h3>
-              <p className="text-xs text-zinc-400 mt-1">Sessões protegidas com tokens criptografados e renovação automática.</p>
+              <p className="text-xs text-zinc-400 mt-1">
+                Sessões protegidas com tokens criptografados e renovação
+                automática.
+              </p>
             </div>
             <div className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-4">
               <WalletCards className="size-5 text-primary mb-2" />
               <h3 className="font-semibold text-sm">Gestão de Parcelas</h3>
-              <p className="text-xs text-zinc-400 mt-1">Controle intuitivo de cartões, Pix, débito e cobranças recorrentes.</p>
+              <p className="text-xs text-zinc-400 mt-1">
+                Controle intuitivo de cartões, Pix, débito e cobranças
+                recorrentes.
+              </p>
             </div>
           </div>
         </div>
@@ -61,4 +73,6 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

@@ -16,14 +16,17 @@ import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
 import { createUser } from "@/app/_actions/auth";
-import { toFormData } from "@/app/utils/functions";
 import { useRouter } from "next/navigation";
+import { toFormData } from "@/app/utils/functions/global";
 
 const formSchema = z
   .object({
     name: z.string().min(1, "O nome é obrigatório."),
-    email: z.string().min(1, "O e-mail é obrigatório.").email("Insira um e-mail válido."),
-    password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres."),
+    email: z
+      .string()
+      .min(1, "O e-mail é obrigatório.")
+      .email("Insira um e-mail válido."),
+    password: z.string().min(1, "A senha é obrigatória."),
     confirmPassword: z.string().min(1, "Confirmação de senha obrigatória."),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -48,15 +51,13 @@ const SignupForm = () => {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Send only required fields to the backend
       const payload = {
         name: data.name,
         email: data.email,
         password: data.password,
       };
       const res = await createUser(toFormData(payload));
-
-      toast.success(res.message || "Conta criada com sucesso! Faça login para continuar.");
+      toast.success(res.message);
       router.push("/auth/login");
     } catch (error) {
       if (error instanceof Error) {
@@ -93,7 +94,6 @@ const SignupForm = () => {
                   id="name"
                   aria-invalid={fieldState.invalid}
                   placeholder="Seu Nome"
-                  autoComplete="name"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -114,7 +114,6 @@ const SignupForm = () => {
                   type="email"
                   placeholder="seu@email.com"
                   aria-invalid={fieldState.invalid}
-                  autoComplete="email"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -133,8 +132,7 @@ const SignupForm = () => {
                   {...field}
                   id="password"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Mínimo de 6 caracteres"
-                  autoComplete="new-password"
+                  placeholder="Digite sua senha"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -156,7 +154,6 @@ const SignupForm = () => {
                   id="confirmPassword"
                   aria-invalid={fieldState.invalid}
                   placeholder="Repita sua senha"
-                  autoComplete="new-password"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -165,7 +162,11 @@ const SignupForm = () => {
             )}
           />
 
-          <Button type="submit" loading={form.formState.isSubmitting} className="w-full">
+          <Button
+            type="submit"
+            loading={form.formState.isSubmitting}
+            className="w-full"
+          >
             {form.formState.isSubmitting ? "Criando conta..." : "Criar conta"}
           </Button>
 

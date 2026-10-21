@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import DashboardContent from "./components/dashboard-content";
 import DashboardSkeleton from "@/components/ui/dashboard-skeleton";
 
-export default function HomePage() {
+const HomePage = () => {
   return (
     <>
       <Suspense fallback={<DashboardSkeleton />}>
@@ -10,4 +10,6 @@ export default function HomePage() {
       </Suspense>
     </>
   );
-}
+};
+
+export default HomePage;

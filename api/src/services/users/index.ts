@@ -60,7 +60,7 @@ export class UsersService {
       name: createdUser.name,
       image: imageUrl,
       email: createdUser.email,
-      message: `Bem-vindo(a) ${createdUser.name}`,
+      message: "Conta criada com sucesso! Faça login para continuar.",
       createdAt: GeralService.toBRDate(new Date()),
       updatedAt: GeralService.toBRDate(new Date()),
     }

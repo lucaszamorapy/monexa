@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const loginSchema = z.object({
@@ -27,8 +27,11 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-export default function LoginForm() {
+const LoginForm = () => {
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -50,7 +53,8 @@ export default function LoginForm() {
         toast.error("E-mail ou senha inválidos.");
         return;
       }
-      router.push("/");
+      router.push(callbackUrl);
+      router.refresh();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(`Ocorreu um erro ao tentar entrar. ${error}.`);
@@ -84,7 +88,6 @@ export default function LoginForm() {
                   type="email"
                   placeholder="seu@email.com"
                   aria-invalid={fieldState.invalid}
-                  autoComplete="email"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -104,7 +107,6 @@ export default function LoginForm() {
                   id="password"
                   placeholder="••••••••"
                   aria-invalid={fieldState.invalid}
-                  autoComplete="current-password"
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -128,4 +130,6 @@ export default function LoginForm() {
       </form>
     </div>
   );
-}
+};
+
+export default LoginForm;
