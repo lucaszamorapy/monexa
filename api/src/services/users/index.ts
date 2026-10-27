@@ -1,7 +1,7 @@
 import "dotenv/config"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IAuthRefreshTokenOutputDto, ILoginInputDto, IRegisterUserInputDto, IRegisterUserOutputDto, IUpdateUserFullInputDto, IUpdateUserFullOutputDto, IUpdateUserImageInputDto, IUpdateUserImageOutputDto, IUpdateUserInputDto, IUpdateUserOutputDto, IUser } from "../../dto/users/index.js";
+import { IAuthRefreshTokenOutputDto, ILoginInputDto, IRegisterUserInputDto, IRegisterUserOutputDto, IUpdatePasswordInputDto, IUpdateUserFullInputDto, IUpdateUserFullOutputDto, IUpdateUserImageInputDto, IUpdateUserImageOutputDto, IUpdateUserInputDto, IUpdateUserOutputDto, IUser, IVerifyCodeVerificationInputDto, IVerifyCodeVerificationOutput } from "../../dto/users/index.js";
 import { CustomError } from "../../errors/index.js";
 import { prisma } from "../../lib/db.js";
 import { GeralService } from "../global/index.js";
@@ -18,6 +18,34 @@ const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN as
   | number;
 
 export class UsersService {
+
+  async verifyCodeVerification(dto: IVerifyCodeVerificationInputDto): Promise<IVerifyCodeVerificationOutput> {
+    let valid: boolean = true;
+    const user = await prisma.users.findFirst({
+      where: { email: dto.email }
+    })
+    if (!user) {
+      throw new CustomError("Usuário não encontrado", "NOT_FOUND")
+    }
+    if (!user.codeVerification) {
+      throw new CustomError("Usuário não possui código de verificação", "BAD_REQUEST")
+    }
+
+    if (user.codeVerification !== dto.code) {
+      throw new CustomError("Código fornecido não corresponde ao do usuário", "BAD_REQUEST")
+    }
+
+    if (
+      !user.expirationAt ||
+      user.expirationAt < new Date()
+    ) {
+      valid = false
+    }
+    return {
+      valid
+    };
+  }
+
 
   async register(dto: IRegisterUserInputDto): Promise<IRegisterUserOutputDto> {
     let imageUrl: string | null = null
@@ -149,6 +177,24 @@ export class UsersService {
       image: imageUrl,
       message: "Usuário atualizado com sucesso"
     };
+  }
+
+  async updatePassword(dto: IUpdatePasswordInputDto): Promise<IMessageOutputDto> {
+    const findUser = await prisma.users.findFirst({ where: { email: dto.email } })
+    if (!findUser) {
+      throw new CustomError("Usuário não encontrado", "NOT_FOUND")
+    }
+    const password = await bcrypt.hash(dto.password, 10)
+
+    await prisma.users.update({
+      where: { userId: findUser.userId },
+      data: {
+        password,
+      },
+    });
+    return {
+      message: "Senha alterada com sucesso"
+    }
   }
 
   async deleteUser(userId: string): Promise<IMessageOutputDto> {

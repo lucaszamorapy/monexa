@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { UsersController } from "../../controllers/users/index.js";
-import { AuthRefreshTokenSchemaResponse, LoginSchema, UserCreateSchemaResponse, UserResetPasswordSchema, UserUpdateSchema, UserUpdateSchemaResponse } from "../../schemas/users/index.js";
+import { AuthRefreshTokenSchemaResponse, AuthVerifyCodeVerificationSchema, AuthVerifyCodeVerificationSchemaResponse, LoginSchema, UserCreateSchemaResponse, UserSendEmailCodeVerificationSchema, UserUpdatePasswordSchema, UserUpdateSchema, UserUpdateSchemaResponse } from "../../schemas/users/index.js";
 import { ErrorSchema } from "../../schemas/errors/index.js";
 import { MessageSchemaResponse } from "../../schemas/global/index.js";
 
@@ -24,27 +24,6 @@ export const usersRoutes = async (app: FastifyInstance) => {
     },
     handler: async (request, reply) => {
       return await usersControllers.post(request.body as Record<string, any>, reply)
-    },
-  });
-
-  app.withTypeProvider<ZodTypeProvider>().route({
-    method: "POST",
-    url: "/auth/login",
-    schema: {
-      operationId: "loginUser",
-      tags: ["Usuário"],
-      summary: "Logar usuário no sistema",
-      body: LoginSchema,
-      response: {
-        200: UserCreateSchemaResponse,
-        400: ErrorSchema,
-        401: ErrorSchema,
-        404: ErrorSchema,
-        500: ErrorSchema,
-      },
-    },
-    handler: async (request, reply) => {
-      return await usersControllers.postLogin(request.body, reply)
     },
   });
 
@@ -92,6 +71,27 @@ export const usersRoutes = async (app: FastifyInstance) => {
   });
 
   app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/auth/login",
+    schema: {
+      operationId: "loginUser",
+      tags: ["Usuário"],
+      summary: "Logar usuário no sistema",
+      body: LoginSchema,
+      response: {
+        200: UserCreateSchemaResponse,
+        400: ErrorSchema,
+        401: ErrorSchema,
+        404: ErrorSchema,
+        500: ErrorSchema,
+      },
+    },
+    handler: async (request, reply) => {
+      return await usersControllers.postLogin(request.body, reply)
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
     method: "GET",
     url: "/auth/refresh-token",
     schema: {
@@ -117,7 +117,7 @@ export const usersRoutes = async (app: FastifyInstance) => {
     schema: {
       operationId: "sendEmailResetPassword",
       tags: ["Usuário"],
-      body: UserResetPasswordSchema,
+      body: UserSendEmailCodeVerificationSchema,
       summary: "Enviar e-mail de redefinição de senha",
       response: {
         200: MessageSchemaResponse,
@@ -129,6 +129,48 @@ export const usersRoutes = async (app: FastifyInstance) => {
     },
     handler: async (request, reply) => {
       return await usersControllers.sendEmailResetPassword(request.body.email, reply)
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "POST",
+    url: "/auth/verify-code-verification",
+    schema: {
+      operationId: "VerifyCodeVerification",
+      tags: ["Usuário"],
+      summary: "Validar coódigo de verificação do usuário por e-mail",
+      body: AuthVerifyCodeVerificationSchema,
+      response: {
+        200: AuthVerifyCodeVerificationSchemaResponse,
+        400: ErrorSchema,
+        401: ErrorSchema,
+        404: ErrorSchema,
+        500: ErrorSchema,
+      },
+    },
+    handler: async (request, reply) => {
+      return await usersControllers.verifyCodeVerification(request.body, reply)
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "PATCH",
+    url: "/auth/update-password",
+    schema: {
+      operationId: "updatePassword",
+      tags: ["Usuário"],
+      summary: "Atualizar senha do usuário",
+      body: UserUpdatePasswordSchema,
+      response: {
+        200: MessageSchemaResponse,
+        400: ErrorSchema,
+        401: ErrorSchema,
+        404: ErrorSchema,
+        500: ErrorSchema,
+      },
+    },
+    handler: async (request, reply) => {
+      return await usersControllers.updatePassword(request.body, reply)
     },
   });
 }

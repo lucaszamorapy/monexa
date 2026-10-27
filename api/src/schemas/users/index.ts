@@ -1,4 +1,4 @@
-import z from "zod"
+import z, { boolean } from "zod"
 
 export const UserCreateSchemaCreate = z.object({
   name: z.string(),
@@ -48,7 +48,20 @@ export const AuthRefreshTokenSchemaResponse = z.object({
   updatedAt: z.string(),
 })
 
-export const UserResetPasswordSchema = z.object({
+export const UserSendEmailCodeVerificationSchema = z.object({
   email: z.email(),
 });
 
+export const AuthVerifyCodeVerificationSchemaResponse = z.object({
+  valid: z.boolean()
+})
+
+export const AuthVerifyCodeVerificationSchema = z.object({
+  email: z.string(),
+  code: z.number(),
+})
+
+export const UserUpdatePasswordSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})

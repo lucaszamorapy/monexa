@@ -62,10 +62,11 @@ export interface IUpdateUserFullOutputDto {
 
 export interface IUser {
   userId: string;
-  password: string;
+  password?: string;
   email: string;
   name: string;
   image: string | null;
+  codeVerification: number | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -80,3 +81,18 @@ export interface IAuthRefreshTokenOutputDto {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface IVerifyCodeVerificationOutput {
+  valid: boolean;
+}
+
+export interface IVerifyCodeVerificationInputDto {
+  email: string;
+  code: number
+}
+
+export interface IUpdatePasswordInputDto {
+  email: string;
+  password: string
+}
+

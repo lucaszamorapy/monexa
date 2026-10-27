@@ -14,3 +14,8 @@ export interface ILoginCredentials {
   email: string;
   password: string;
 }
+
+export interface IVerifyCodeVerificationBody {
+  email: string,
+  code: number
+}

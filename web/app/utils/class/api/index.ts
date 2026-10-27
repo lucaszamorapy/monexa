@@ -38,9 +38,14 @@ export class Request {
     const data = response.status === 204 ? null : await response.json()
 
     if (!response.ok) {
-      const err = data as IApiError
-      console.error(`${err.code}: ${err.error}`)
-      throw new Error(err.error ?? "Ocorreu um erro inesperado. Tente novamente.");
+      if (this.isApiError(data)) {
+        console.error(`${data.code}: ${data.error}`)
+        throw new Error(data.error ?? "Ocorreu um erro inesperado. Tente novamente.");
+      }
+      else {
+        console.error(data.message)
+        throw new Error(data.message ?? "Ocorreu um erro inesperado. Tente novamente.");
+      }
     }
 
     return data as T;
@@ -54,6 +59,8 @@ export class Request {
     return await this.execute<T>("POST")
   }
 
+
+
   async put<T>() {
     return await this.execute<T>("PUT")
   }
@@ -64,6 +71,15 @@ export class Request {
 
   async delete<T>() {
     return await this.execute<T>("DELETE")
+  }
+
+  isApiError(data: unknown): data is IApiError {
+    return (
+      typeof data === "object" &&
+      data !== null &&
+      "code" in data &&
+      "error" in data
+    );
   }
 
 }

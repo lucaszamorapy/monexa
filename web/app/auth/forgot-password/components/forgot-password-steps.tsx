@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/stepper";
 import { cn } from "cn";
 import { Suspense, useState } from "react";
-import ForgotPasswordForm from "./forgot-password-form";
+import ForgotPasswordEmailForm from "./forgot-password-email-form";
+import ForgotPasswordCodeVerificationForm from "./forgot-password-code-verification-form";
 
 const steps = [
   {
@@ -34,17 +35,19 @@ const steps = [
 
 const ForgotPasswordSteps = () => {
   const [current, setCurrent] = useState(steps[0].id);
-  const [formData, setFormData] = useState<FormData | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [validSteps, setValidSteps] = useState<Record<string, boolean>>({});
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const currentIndex = steps.findIndex((s) => s.id === current);
-  const goNext = () =>
+  const goNext = () => {
     setCurrent(steps[Math.min(currentIndex + 1, steps.length - 1)].id);
-  const goBack = () => setCurrent(steps[Math.max(currentIndex - 1, 0)].id);
+  };
+  const goBack = () => {
+    setCurrent(steps[Math.max(currentIndex - 1, 0)].id);
+  };
 
   const resetAll = () => {
-    setFormData(null);
     setCurrent(steps[0].id);
     setSubmitted(false);
     setValidSteps({});
@@ -108,7 +111,23 @@ const ForgotPasswordSteps = () => {
               <div className="flex flex-1 mt-5 items-center justify-center">
                 <div className="w-full max-w-xs">
                   <Suspense fallback={<Loader />}>
-                    <ForgotPasswordForm nextStep={() => goNext()} />
+                    <ForgotPasswordEmailForm
+                      nextStep={() => goNext()}
+                      setUserEmail={(email: string) => setUserEmail(email)}
+                    />
+                  </Suspense>
+                </div>
+              </div>
+            )}
+            {step.id === "codeVerification" && (
+              <div className="flex flex-1 mt-5 items-center justify-center">
+                <div className="w-full max-w-xs">
+                  <Suspense fallback={<Loader />}>
+                    <ForgotPasswordCodeVerificationForm
+                      nextStep={() => goNext()}
+                      goBackStep={() => goBack()}
+                      email={userEmail}
+                    />
                   </Suspense>
                 </div>
               </div>

@@ -4,7 +4,7 @@ import { FastifyReply } from "fastify"
 import { UsersService } from "../../services/users/index.js";
 import { UserCreateSchemaCreate, UserUpdateSchema } from "../../schemas/users/index.js";
 import { MultipartFile } from "@fastify/multipart";
-import { ILoginInputDto } from "../../dto/users/index.js";
+import { ILoginInputDto, IUpdatePasswordInputDto, IVerifyCodeVerificationInputDto } from "../../dto/users/index.js";
 
 
 const usersService = new UsersService();
@@ -13,6 +13,59 @@ export class UsersController {
   constructor(app: FastifyInstance) {
     this.app = app
   }
+
+  async verifyCodeVerification(body: IVerifyCodeVerificationInputDto, reply: FastifyReply) {
+    try {
+      const res = await usersService.verifyCodeVerification(body)
+      return reply.status(200).send(res)
+    } catch (error) {
+
+      this.app.log.error(error);
+      if (error instanceof CustomError) {
+        return reply.status(error.number).send({
+          error: error.message,
+          code: error.code,
+        });
+      }
+      if (error instanceof Error) {
+        return reply.status(500).send({
+          error: error.message,
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      return reply.status(500).send({
+        error: "Internal server error",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }
+
+  async updatePassword(body: IUpdatePasswordInputDto, reply: FastifyReply) {
+    try {
+      const res = await usersService.updatePassword(body)
+      return reply.status(200).send(res)
+    } catch (error) {
+
+      this.app.log.error(error);
+      if (error instanceof CustomError) {
+        return reply.status(error.number).send({
+          error: error.message,
+          code: error.code,
+        });
+      }
+      if (error instanceof Error) {
+        return reply.status(500).send({
+          error: error.message,
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      return reply.status(500).send({
+        error: "Internal server error",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }
+
   async post(body: Record<string, any>, reply: FastifyReply) {
     try {
 

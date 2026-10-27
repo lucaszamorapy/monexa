@@ -11,34 +11,43 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { forgotPasswordEmail } from "@/app/_actions/users";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { verifyCodeVerification } from "@/app/_actions/users";
 
 const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .min(1, "O e-mail é obrigatório.")
-    .email("Insira um e-mail válido."),
+  code: z.string().min(1, "Insira o código de verificação."),
 });
 
 type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
-interface IForgortPasswordFormProps {
+interface IForgortPasswordCodeProps {
   nextStep: () => void;
+  goBackStep: () => void;
+  email: string;
 }
 
-const ForgotPasswordForm = ({ nextStep }: IForgortPasswordFormProps) => {
+const ForgotPasswordCodeVerificationForm = ({
+  nextStep,
+  goBackStep,
+  email,
+}: IForgortPasswordCodeProps) => {
   const form = useForm<ForgotPasswordData>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
-      email: "",
+      code: "",
     },
   });
 
   const onSubmit = async (data: ForgotPasswordData) => {
     try {
-      const res = await forgotPasswordEmail(data.email);
-      toast.success(res.message);
+      const res = await verifyCodeVerification({
+        email: email,
+        code: Number(data.code),
+      });
+      if (!res.valid) return;
       nextStep();
     } catch (error) {
       if (error instanceof Error) {
@@ -55,27 +64,28 @@ const ForgotPasswordForm = ({ nextStep }: IForgortPasswordFormProps) => {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Esqueci minha senha</h1>
+            <h1>Código de verificação</h1>
             <span className="text-muted-foreground">
-              Informe o e-mail de sua conta{" "}
-              <b className="text-primary">Monexa</b> para enviarmos seu código
-              de verificação
+              Preencha o código de verificação que enviamos a você
             </span>
           </div>
 
           <Controller
-            name="email"
+            name="code"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="email">E-mail</FieldLabel>
-                <Input
-                  {...field}
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  aria-invalid={fieldState.invalid}
-                />
+                <FieldLabel htmlFor="code">Código de verificação</FieldLabel>
+                <InputOTP {...field} id="code" maxLength={6}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
@@ -88,16 +98,15 @@ const ForgotPasswordForm = ({ nextStep }: IForgortPasswordFormProps) => {
             loading={form.formState.isSubmitting}
             className="w-full"
           >
-            {form.formState.isSubmitting ? "Enviando..." : "Enviar"}
-          </Button>
-
-          <Button asChild variant="link" className="w-full">
-            <Link href="/auth/login">Lembrou da senha? Entre agora mesmo!</Link>
+            {form.formState.isSubmitting ? "Verificando..." : "Verificar"}
           </Button>
         </FieldGroup>
       </form>
+      <Button className="w-full mt-5" variant="outline" onClick={goBackStep}>
+        Voltar
+      </Button>
     </div>
   );
 };
 
-export default ForgotPasswordForm;
+export default ForgotPasswordCodeVerificationForm;
