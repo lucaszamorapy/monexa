@@ -1,7 +1,7 @@
 "use server"
 
 import { Request } from "@/app/utils/class/api";
-import { IAuthResponse, IVerifyCodeVerificationBody } from "@/app/utils/types/users";
+import { IAuthResponse, IUpdatePasswordBody, IVerifyCodeVerificationBody } from "@/app/utils/types/users";
 
 export const createUser = async (body: FormData): Promise<IAuthResponse> => {
   const api = new Request("users", { body })
@@ -24,5 +24,11 @@ export const forgotPasswordEmail = async (email: string): Promise<{ message: str
 export const verifyCodeVerification = async (body: IVerifyCodeVerificationBody): Promise<{ valid: boolean }> => {
   const api = new Request("users/auth/verify-code-verification", { body })
   const res = await api.post<{ valid: boolean }>();
+  return res;
+}
+
+export const updatePassword = async (body: IUpdatePasswordBody): Promise<{ message: string }> => {
+  const api = new Request("users/auth/update-password", { body })
+  const res = await api.patch<{ message: string }>();
   return res;
 }

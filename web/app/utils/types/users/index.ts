@@ -16,6 +16,11 @@ export interface ILoginCredentials {
 }
 
 export interface IVerifyCodeVerificationBody {
-  email: string,
-  code: number
+  email: string;
+  code: number;
+}
+
+export interface IUpdatePasswordBody {
+  email: string;
+  password: string;
 }

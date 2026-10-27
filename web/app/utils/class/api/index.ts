@@ -59,10 +59,12 @@ export class Request {
     return await this.execute<T>("POST")
   }
 
-
-
   async put<T>() {
     return await this.execute<T>("PUT")
+  }
+
+  async patch<T>() {
+    return await this.execute<T>("PATCH")
   }
 
   async path<T>() {

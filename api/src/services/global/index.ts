@@ -70,7 +70,7 @@ export class GeralService {
     const html = templates[params.template](params.data)
 
     await transporter.sendMail({
-      from: `"Taverna do Barik" <${process.env.SMTP_USER}>`,
+      from: `"Monexa" <${process.env.SMTP_USER}>`,
       to: params.to,
       subject: params.subject,
       html,

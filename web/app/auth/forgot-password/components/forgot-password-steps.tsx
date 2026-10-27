@@ -14,6 +14,7 @@ import { cn } from "cn";
 import { Suspense, useState } from "react";
 import ForgotPasswordEmailForm from "./forgot-password-email-form";
 import ForgotPasswordCodeVerificationForm from "./forgot-password-code-verification-form";
+import ForgotPasswordUpdate from "./forgot-password-update";
 
 const steps = [
   {
@@ -27,7 +28,7 @@ const steps = [
     description: "Preencha o código de verificação abaixo",
   },
   {
-    id: "done",
+    id: "updatePassword",
     title: "Nova senha",
     description: "Digite sua nova senha",
   },
@@ -45,12 +46,6 @@ const ForgotPasswordSteps = () => {
   };
   const goBack = () => {
     setCurrent(steps[Math.max(currentIndex - 1, 0)].id);
-  };
-
-  const resetAll = () => {
-    setCurrent(steps[0].id);
-    setSubmitted(false);
-    setValidSteps({});
   };
 
   const isCurrentValid = !!validSteps[current];
@@ -127,6 +122,18 @@ const ForgotPasswordSteps = () => {
                       nextStep={() => goNext()}
                       goBackStep={() => goBack()}
                       email={userEmail}
+                    />
+                  </Suspense>
+                </div>
+              </div>
+            )}
+            {step.id === "updatePassword" && (
+              <div className="flex flex-1 mt-5 items-center justify-center">
+                <div className="w-full max-w-xs">
+                  <Suspense fallback={<Loader />}>
+                    <ForgotPasswordUpdate
+                      email={userEmail}
+                      goBackStep={() => goBack()}
                     />
                   </Suspense>
                 </div>
