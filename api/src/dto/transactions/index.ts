@@ -16,9 +16,7 @@ export interface ICreateTransactionInputDto {
   situation: TransactionSituation;
   paymentMethod: TransactionPaymentMethod;
   installment: number | null; //quantidade de parcelas
-  installmentNumber: number | null; //numero da parcela
   amount: number;
-  totalAmountIntallment: number | null; //valor total das parcelas
   date: Date | string;
   description: string;
 }
@@ -32,9 +30,7 @@ export interface IUpdateTransactionInputDto {
   situation: TransactionSituation
   paymentMethod: TransactionPaymentMethod
   installment: number | null;
-  installmentNumber?: number | null;
   amount: number;
-  totalAmountIntallment?: number | null;
   date: Date | string;
   description: string;
 }

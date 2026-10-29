@@ -163,6 +163,11 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
     name: "isInstallment",
   });
 
+  const paymentMethod = useWatch({
+    control: form.control,
+    name: "paymentMethod",
+  });
+
   const handleOpenChange = useCallback(
     (open: boolean) => {
       setDialogOpen(open);
@@ -198,9 +203,7 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
 
   useEffect(() => {
     if (fetchedTransaction) {
-      const isInst = Boolean(
-        fetchedTransaction.installment && fetchedTransaction.installment > 1,
-      );
+      const isInst = Boolean(fetchedTransaction.installment);
 
       reset({
         type: fetchedTransaction.type,
@@ -305,9 +308,9 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                           <SelectValue placeholder="Selecione o tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TRANSACTION_TYPES.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
+                          {TRANSACTION_TYPES.map((t) => (
+                            <SelectItem key={t} value={t}>
+                              {t}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -358,9 +361,9 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                           <SelectValue placeholder="Selecione a categoria" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TRANSACTION_CATEGORIES.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
+                          {TRANSACTION_CATEGORIES.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -390,9 +393,9 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                           <SelectValue placeholder="Selecione a situação" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TRANSACTION_SITUATIONS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
+                          {TRANSACTION_SITUATIONS.map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {s}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -415,6 +418,7 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                         Método de pagamento
                       </FieldLabel>
                       <Select
+                        disabled={disableInstallment}
                         value={field.value}
                         onValueChange={field.onChange}
                       >
@@ -426,9 +430,9 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                           <SelectValue placeholder="Selecione o método" />
                         </SelectTrigger>
                         <SelectContent>
-                          {TRANSACTION_PAYMENT_METHODS.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
+                          {TRANSACTION_PAYMENT_METHODS.map((p) => (
+                            <SelectItem key={p} value={p}>
+                              {p}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -459,75 +463,76 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                   )}
                 />
               </div>
-
-              <div className="flex flex-col gap-4 border border-input/40 p-3">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="space-y-0.5">
-                    <Label
-                      htmlFor="isInstallment"
-                      className="cursor-pointer text-sm font-medium"
-                    >
-                      Transação parcelada?
-                    </Label>
-                    <p className="text-xs text-muted-foreground">
-                      Habilite para registrar uma compra parcelada.
-                    </p>
+              {(paymentMethod === "Crédito" || paymentMethod === "Pix") && (
+                <div className="flex flex-col gap-4 border border-input/40 p-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-0.5">
+                      <Label
+                        htmlFor="isInstallment"
+                        className="cursor-pointer text-sm font-medium"
+                      >
+                        Transação parcelada?
+                      </Label>
+                      <p className="text-xs text-muted-foreground">
+                        Habilite para registrar uma compra parcelada.
+                      </p>
+                    </div>
+                    <Controller
+                      name="isInstallment"
+                      control={form.control}
+                      render={({ field }) => (
+                        <Switch
+                          id="isInstallment"
+                          disabled={disableInstallment}
+                          checked={field.value}
+                          onCheckedChange={(checked) => {
+                            field.onChange(checked);
+                            if (!checked) {
+                              form.setValue("installment", null);
+                              form.clearErrors("installment");
+                            }
+                          }}
+                        />
+                      )}
+                    />
                   </div>
+
                   <Controller
-                    name="isInstallment"
+                    name="installment"
                     control={form.control}
-                    render={({ field }) => (
-                      <Switch
-                        id="isInstallment"
-                        disabled={disableInstallment}
-                        checked={field.value}
-                        onCheckedChange={(checked) => {
-                          field.onChange(checked);
-                          if (!checked) {
-                            form.setValue("installment", null);
-                            form.clearErrors("installment");
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="installment">
+                          Quantidade de parcelas
+                        </FieldLabel>
+                        <Input
+                          {...field}
+                          id="installment"
+                          type="number"
+                          placeholder={
+                            isInstallment
+                              ? "Mínimo 2 parcelas"
+                              : "Parcelamento desativado"
                           }
-                        }}
-                      />
+                          disabled={!isInstallment || disableInstallment}
+                          value={field.value ?? ""}
+                          onChange={(e) => {
+                            const val =
+                              e.target.value === ""
+                                ? null
+                                : Number(e.target.value);
+                            field.onChange(val);
+                          }}
+                          aria-invalid={fieldState.invalid}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
                     )}
                   />
                 </div>
-
-                <Controller
-                  name="installment"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="installment">
-                        Quantidade de parcelas
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        id="installment"
-                        type="number"
-                        placeholder={
-                          isInstallment
-                            ? "Mínimo 2 parcelas"
-                            : "Parcelamento desativado"
-                        }
-                        disabled={!isInstallment || disableInstallment}
-                        value={field.value ?? ""}
-                        onChange={(e) => {
-                          const val =
-                            e.target.value === ""
-                              ? null
-                              : Number(e.target.value);
-                          field.onChange(val);
-                        }}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </div>
+              )}
 
               <Controller
                 name="description"
