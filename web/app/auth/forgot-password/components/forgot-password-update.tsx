@@ -70,7 +70,7 @@ const ForgotPasswordUpdate = ({
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Nova senha</h1>
+            <h2>Nova senha</h2>
             <span className="text-muted-foreground">
               Digite e confirme sua nova senha abaixo
             </span>

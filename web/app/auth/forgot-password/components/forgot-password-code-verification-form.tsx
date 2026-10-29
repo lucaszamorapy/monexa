@@ -64,7 +64,7 @@ const ForgotPasswordCodeVerificationForm = ({
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Código de verificação</h1>
+            <h2>Código de verificação</h2>
             <span className="text-muted-foreground">
               Preencha o código de verificação que enviamos a você
             </span>

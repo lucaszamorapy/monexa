@@ -70,7 +70,7 @@ const LoginForm = () => {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Acesse sua conta</h1>
+            <h2>Acesse sua conta</h2>
             <span className="text-muted-foreground">
               Entre com suas credenciais para continuar
             </span>

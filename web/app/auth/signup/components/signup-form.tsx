@@ -75,7 +75,7 @@ const SignupForm = () => {
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Crie sua conta</h1>
+            <h2>Crie sua conta</h2>
             <span className="text-muted-foreground">
               Preencha o formulário abaixo para começar
             </span>

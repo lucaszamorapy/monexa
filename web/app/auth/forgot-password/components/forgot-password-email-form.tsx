@@ -60,7 +60,7 @@ const ForgotPasswordEmailForm = ({
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1>Esqueci minha senha</h1>
+            <h2>Esqueci minha senha</h2>
             <span className="text-muted-foreground">
               Informe o e-mail de sua conta{" "}
               <b className="text-primary">Monexa</b> para enviarmos seu código

@@ -15,43 +15,26 @@ import { Suspense, useState } from "react";
 import ForgotPasswordEmailForm from "./forgot-password-email-form";
 import ForgotPasswordCodeVerificationForm from "./forgot-password-code-verification-form";
 import ForgotPasswordUpdate from "./forgot-password-update";
-
-const steps = [
-  {
-    id: "sendEmail",
-    title: "Envio de código de verificação",
-    description: "Informe seu e-mail abaixo",
-  },
-  {
-    id: "codeVerification",
-    title: "Código de verificação",
-    description: "Preencha o código de verificação abaixo",
-  },
-  {
-    id: "updatePassword",
-    title: "Nova senha",
-    description: "Digite sua nova senha",
-  },
-];
+import { STEPS } from "@/app/utils/lists/users";
 
 const ForgotPasswordSteps = () => {
-  const [current, setCurrent] = useState(steps[0].id);
+  const [current, setCurrent] = useState(STEPS[0].id);
   const [submitted, setSubmitted] = useState(false);
   const [validSteps, setValidSteps] = useState<Record<string, boolean>>({});
   const [userEmail, setUserEmail] = useState<string>("");
 
-  const currentIndex = steps.findIndex((s) => s.id === current);
+  const currentIndex = STEPS.findIndex((s) => s.id === current);
   const goNext = () => {
-    setCurrent(steps[Math.min(currentIndex + 1, steps.length - 1)].id);
+    setCurrent(STEPS[Math.min(currentIndex + 1, STEPS.length - 1)].id);
   };
   const goBack = () => {
-    setCurrent(steps[Math.max(currentIndex - 1, 0)].id);
+    setCurrent(STEPS[Math.max(currentIndex - 1, 0)].id);
   };
 
   const isCurrentValid = !!validSteps[current];
   return (
     <Stepper
-      steps={steps}
+      steps={STEPS}
       value={current}
       onValueChange={(v) => {
         if (submitted) return;
@@ -62,7 +45,7 @@ const ForgotPasswordSteps = () => {
       orientation="horizontal"
     >
       <StepperNav>
-        {steps.map((step, index) => (
+        {STEPS.map((step, index) => (
           <StepperItem key={index} stepId={step.id} className="relative flex-1">
             <StepperTrigger
               className={cn(
@@ -86,7 +69,7 @@ const ForgotPasswordSteps = () => {
                 {step.title}
               </StepperTitle>
             </StepperTrigger>
-            {steps.length > index + 1 && (
+            {STEPS.length > index + 1 && (
               <StepperSeparator
                 className={cn(
                   "absolute inset-x-0 top-2 right-[calc(-50%+18px)] left-[calc(50%+18px)]",
@@ -100,7 +83,7 @@ const ForgotPasswordSteps = () => {
         ))}
       </StepperNav>
       <StepperPanel>
-        {steps.map((step) => (
+        {STEPS.map((step) => (
           <StepperContent key={step.id} value={step.id}>
             {step.id === "sendEmail" && (
               <div className="flex flex-1 mt-5 items-center justify-center">

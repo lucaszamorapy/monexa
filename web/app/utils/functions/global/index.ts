@@ -17,3 +17,17 @@ export const toFormData = (data: Record<string, unknown>) => {
 
   return formData;
 };
+
+export const toDate = (val: Date | string | null | undefined): Date => {
+  if (!val) return new Date();
+  if (val instanceof Date) return isNaN(val.getTime()) ? new Date() : val;
+  if (typeof val === "string") {
+    if (/^\d{4}-\d{2}-\d{2}/.test(val)) {
+      const [year, month, day] = val.slice(0, 10).split("-").map(Number);
+      return new Date(year, month - 1, day, 12, 0, 0);
+    }
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+  return new Date();
+};
