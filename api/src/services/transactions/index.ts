@@ -148,7 +148,7 @@ export class TransactionsService {
               data: {
                 type: dto.type,
                 category: dto.category,
-                situation: dto.situation,
+                situation: transaction.transactionId === findTransaction.transactionId ? dto.situation : transaction.situation,
                 description: dto.description,
               },
             })

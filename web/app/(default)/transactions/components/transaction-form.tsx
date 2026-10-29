@@ -140,9 +140,7 @@ export interface ITransactionFormProps {
   transactionId?: string;
 }
 
-const TransactionForm = ({
-  transactionId = "d5d39ba1-83f7-41c3-b9da-a6b8519a3e16",
-}: ITransactionFormProps) => {
+const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
   const [fetchedTransaction, setFetchedTransaction] = useState<
     ITransaction | undefined
   >(undefined);
