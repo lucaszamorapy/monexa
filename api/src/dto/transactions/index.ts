@@ -27,8 +27,8 @@ export interface IUpdateTransactionInputDto {
   transactionFatherId: string | null;
   type: TransactionType;
   category: TransactionCategory;
-  situation: TransactionSituation
-  paymentMethod: TransactionPaymentMethod
+  situation: TransactionSituation;
+  paymentMethod: TransactionPaymentMethod;
   installment: number | null;
   amount: number;
   date: Date | string;

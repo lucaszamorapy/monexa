@@ -113,18 +113,64 @@ export class TransactionsService {
     if (!findTransaction) {
       throw new CustomError("Transação não encontrada", "NOT_FOUND")
     }
-    const date = moment(dto.date, "YYYY-MM-DD").toDate();
-    await prisma.transactions.update({
-      where: { transactionId: findTransaction.transactionId },
-      data: {
-        ...dto,
-        date
-      },
-    });
+
+
+    if (findTransaction.installment) {
+      let transactions: ITransaction[];
+
+      if (!findTransaction.transactionFatherId) {
+        // é o pai: ele mesmo + filhos
+        transactions = await prisma.transactions.findMany({
+          where: {
+            OR: [
+              { transactionId: findTransaction.transactionId },
+              { transactionFatherId: findTransaction.transactionId },
+            ],
+          },
+        })
+      } else {
+        // é filho: pai + irmãos (incluindo ele mesmo)
+        transactions = await prisma.transactions.findMany({
+          where: {
+            OR: [
+              { transactionId: findTransaction.transactionFatherId },
+              { transactionFatherId: findTransaction.transactionFatherId },
+            ],
+          },
+        })
+      }
+
+      await prisma.$transaction(async (tx) => {
+        await Promise.all(
+          transactions.map((transaction) =>
+            tx.transactions.update({
+              where: { transactionId: transaction.transactionId },
+              data: {
+                type: dto.type,
+                category: dto.category,
+                situation: dto.situation,
+                description: dto.description,
+              },
+            })
+          )
+        )
+      })
+
+    } else {
+      const date = moment(dto.date, "YYYY-MM-DD").toDate();
+      await prisma.transactions.update({
+        where: { transactionId: findTransaction.transactionId },
+        data: {
+          ...dto,
+          date
+        },
+      });
+    }
     return {
       message: `Transação editada com sucesso!`,
     }
   }
+
   async deleteTransaction(transactionId: string): Promise<IMessageOutputDto> {
     const findTransaction = await prisma.transactions.findFirst({ where: { transactionId } })
     if (!findTransaction) {
