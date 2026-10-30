@@ -3,9 +3,19 @@
 import { Request } from "@/app/utils/class/api";
 import {
   ICreateTransactionBody,
+  IGetAllTransactionsByFilterBody,
   ITransaction,
   IUpdateTransactionBody,
 } from "@/app/utils/types/transactions";
+
+export const getAllTransactionsByFilter = async (filter: IGetAllTransactionsByFilterBody): Promise<ITransaction[]> => {
+  const api = new Request("transactions", {
+    query: filter,
+    next: { tags: ["transactions"] },
+  });
+  const res = await api.get<ITransaction[]>();
+  return res;
+};
 
 export const createTransaction = async (
   body: ICreateTransactionBody

@@ -64,4 +64,15 @@ export interface ITransaction {
   children?: ITransaction[];
 }
 
+export interface IGetAllTransactionsByFilterBody {
+  dateInitial?: string | null;
+  dateFinal?: string | null;
+  type?: TransactionType | null;
+  category?: TransactionCategory | null;
+  paymentMethod?: TransactionPaymentMethod | null;
+  situation?: TransactionSituation | null;
+  description?: string | null;
+}
+
+
 

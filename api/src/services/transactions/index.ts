@@ -4,7 +4,6 @@ import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, IPatchTransact
 import { CustomError } from "../../errors/index.js";
 import { prisma } from "../../lib/db.js";
 import { GeralService } from "../global/index.js";
-import { TransactionSituation } from "../../generated/prisma/enums.js";
 
 export class TransactionsService {
   async getAllTransactions(token: string, dto: IGetAllTransactionsInputDto): Promise<ITransaction[]> {

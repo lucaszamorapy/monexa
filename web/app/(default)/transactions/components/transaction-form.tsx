@@ -55,7 +55,7 @@ import { toDate } from "@/app/utils/functions/global";
 
 const formSchema = z
   .object({
-    type: z.enum(["Despesa", "Entrada"] as const, {
+    type: z.enum(TRANSACTION_TYPES as [string, ...string[]], {
       required_error: "O tipo de transação é obrigatório.",
       invalid_type_error: "Selecione um tipo de transação válido.",
     }),
@@ -65,33 +65,21 @@ const formSchema = z
         invalid_type_error: "Informe um valor válido.",
       })
       .positive("O valor deve ser maior que zero."),
-    category: z.enum(
-      [
-        "Alimentação",
-        "Aluguel",
-        "Contas",
-        "Educação",
-        "Lazer",
-        "Moradia",
-        "Outros",
-        "Saúde",
-        "Transporte",
-        "Salário",
-        "Investimentos",
-      ] as const,
-      {
-        required_error: "A categoria é obrigatória.",
-        invalid_type_error: "Selecione uma categoria válida.",
-      },
-    ),
-    situation: z.enum(["Pago", "Pendente"] as const, {
+    category: z.enum(TRANSACTION_CATEGORIES as [string, ...string[]], {
+      required_error: "A categoria é obrigatória.",
+      invalid_type_error: "Selecione uma categoria válida.",
+    }),
+    situation: z.enum(TRANSACTION_SITUATIONS as [string, ...string[]], {
       required_error: "A situação é obrigatória.",
       invalid_type_error: "Selecione uma situação válida.",
     }),
-    paymentMethod: z.enum(["Pix", "Débito", "Crédito"] as const, {
-      required_error: "O método de pagamento é obrigatório.",
-      invalid_type_error: "Selecione um método de pagamento válido.",
-    }),
+    paymentMethod: z.enum(
+      TRANSACTION_PAYMENT_METHODS as [string, ...string[]],
+      {
+        required_error: "O método de pagamento é obrigatório.",
+        invalid_type_error: "Selecione um método de pagamento válido.",
+      },
+    ),
     date: z.date({
       required_error: "A data é obrigatória.",
       invalid_type_error: "Selecione ou informe uma data válida.",

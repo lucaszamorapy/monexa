@@ -10,6 +10,33 @@ export class Request {
     this.options = options
   }
 
+  private getUrl(): string {
+    const queryParams = this.options?.params ?? this.options?.query;
+    if (!queryParams) return this.completePath;
+
+    const searchParams = new URLSearchParams();
+
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value === undefined || value === null || value === "") continue;
+
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          if (item !== undefined && item !== null && item !== "") {
+            searchParams.append(key, String(item));
+          }
+        }
+      } else {
+        searchParams.append(key, String(value));
+      }
+    }
+
+    const queryString = searchParams.toString();
+    if (!queryString) return this.completePath;
+
+    const separator = this.completePath.includes("?") ? "&" : "?";
+    return `${this.completePath}${separator}${queryString}`;
+  }
+
   private async execute<T>(method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"): Promise<T> {
     const { body, token, headers, ...init } = this.options ?? {}
 
@@ -17,7 +44,9 @@ export class Request {
     // undefined => pega da sessão | null => requisição pública (login, cadastro)
     const accessToken = token === undefined ? await getServerToken() : token;
 
-    const response = await fetch(this.completePath, {
+    const url = this.getUrl();
+
+    const response = await fetch(url, {
       ...init,
       method,
       headers: {

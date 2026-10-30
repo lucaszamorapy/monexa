@@ -57,6 +57,7 @@ export const TransactionSchemaGetAllQuery = z.object({
   category: z.enum(TransactionCategory).nullable().optional(),
   paymentMethod: z.enum(TransactionPaymentMethod).nullable().optional(),
   situation: z.enum(TransactionSituation).nullable().optional(),
+  description: z.string().nullable().optional(),
 })
 
 export const TransactionSchemaGetAll = z.array(TransactionSchemaGetByIdResponse)
