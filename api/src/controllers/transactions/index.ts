@@ -2,7 +2,8 @@ import { FastifyInstance, FastifyRequest } from "fastify";
 import { CustomError } from "../../errors/index.js";
 import { FastifyReply } from "fastify"
 import { TransactionsService } from "../../services/transactions/index.js";
-import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
+import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, IPatchTransactionSituationInputDto, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
+import { TransactionSituation } from "../../generated/prisma/enums.js";
 
 const transactionService = new TransactionsService();
 
@@ -98,6 +99,33 @@ export class TranscationsController {
       const { id } = req.params as { id: string };
       const body = req.body
       const res = await transactionService.updateTransaction(body as IUpdateTransactionInputDto, id);
+      return reply.status(200).send(res)
+    } catch (error) {
+      this.app.log.error(error);
+      if (error instanceof CustomError) {
+        return reply.status(error.number).send({
+          error: error.message,
+          code: error.code,
+        });
+      }
+      if (error instanceof Error) {
+        return reply.status(500).send({
+          error: error.message,
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
+      return reply.status(500).send({
+        error: "Internal server error",
+        code: "INTERNAL_SERVER_ERROR",
+      });
+    }
+  }
+
+  async patchSituation(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const { id } = req.params as { id: string };
+      const body = req.body
+      const res = await transactionService.patchTransactionSituation(id, body as IPatchTransactionSituationInputDto);
       return reply.status(200).send(res)
     } catch (error) {
       this.app.log.error(error);

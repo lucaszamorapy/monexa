@@ -1,9 +1,10 @@
 import moment from "moment";
 import { IMessageOutputDto } from "../../dto/global/index.js";
-import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, ITransaction, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
+import { ICreateTransactionInputDto, IGetAllTransactionsInputDto, IPatchTransactionSituationInputDto, ITransaction, IUpdateTransactionInputDto } from "../../dto/transactions/index.js";
 import { CustomError } from "../../errors/index.js";
 import { prisma } from "../../lib/db.js";
 import { GeralService } from "../global/index.js";
+import { TransactionSituation } from "../../generated/prisma/enums.js";
 
 export class TransactionsService {
   async getAllTransactions(token: string, dto: IGetAllTransactionsInputDto): Promise<ITransaction[]> {
@@ -27,6 +28,7 @@ export class TransactionsService {
         ...(dto.category && { category: dto.category }),
         ...(dto.paymentMethod && { paymentMethod: dto.paymentMethod }),
         ...(dto.situation && { situation: dto.situation }),
+        ...(dto.description && { description: { contains: dto.description } }),
       },
       orderBy: [
         {
@@ -171,12 +173,59 @@ export class TransactionsService {
     }
   }
 
+  async patchTransactionSituation(transactionId: string, dto: IPatchTransactionSituationInputDto): Promise<IMessageOutputDto> {
+    const findTransaction = await prisma.transactions.findFirst({ where: { transactionId } })
+    if (!findTransaction) {
+      throw new CustomError("Transação não encontrada", "NOT_FOUND")
+    }
+    await prisma.transactions.update({
+      where: { transactionId },
+      data: {
+        situation: dto.situation
+      }
+    })
+    return {
+      message: `Situação da transação alterada para ${dto.situation}!`,
+    }
+  }
+
   async deleteTransaction(transactionId: string): Promise<IMessageOutputDto> {
     const findTransaction = await prisma.transactions.findFirst({ where: { transactionId } })
     if (!findTransaction) {
       throw new CustomError("Transação não encontrada", "NOT_FOUND")
     }
-    await prisma.transactions.delete({ where: { transactionId } })
+    if (findTransaction.installment) {
+      let transactions: ITransaction[];
+
+      if (!findTransaction.transactionFatherId) {
+        // é o pai: ele mesmo + filhos
+        transactions = await prisma.transactions.findMany({
+          where: {
+            OR: [
+              { transactionId: findTransaction.transactionId },
+              { transactionFatherId: findTransaction.transactionId },
+            ],
+          },
+        })
+      } else {
+        // é filho: pai + irmãos (incluindo ele mesmo)
+        transactions = await prisma.transactions.findMany({
+          where: {
+            OR: [
+              { transactionId: findTransaction.transactionFatherId },
+              { transactionFatherId: findTransaction.transactionFatherId },
+            ],
+          },
+        })
+      }
+      await prisma.transactions.deleteMany({
+        where: {
+          transactionId: { in: transactions.map((t) => t.transactionId) }
+        }
+      })
+    } else {
+      await prisma.transactions.delete({ where: { transactionId } })
+    }
     return {
       message: "Transação excluída com sucesso!"
     }

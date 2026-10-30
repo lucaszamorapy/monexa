@@ -7,6 +7,7 @@ export interface IGetAllTransactionsInputDto {
   category?: TransactionCategory | null;
   paymentMethod?: TransactionPaymentMethod | null;
   situation?: TransactionSituation | null;
+  description?: string | null;
 }
 
 export interface ICreateTransactionInputDto {
@@ -51,4 +52,8 @@ export interface ITransaction {
   description: string | null;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IPatchTransactionSituationInputDto {
+  situation: TransactionSituation;
 }

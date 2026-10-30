@@ -60,3 +60,8 @@ export const TransactionSchemaGetAllQuery = z.object({
 })
 
 export const TransactionSchemaGetAll = z.array(TransactionSchemaGetByIdResponse)
+
+
+export const TransactionSituationPatchSchema = z.object({
+  situation: z.enum(TransactionSituation),
+})

@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { ErrorSchema } from "../../schemas/errors/index.js";
 import { TranscationsController } from "../../controllers/transactions/index.js";
-import { TransactionSchemaCreate, TransactionSchemaGetAll, TransactionSchemaGetAllQuery, TransactionSchemaGetByIdResponse, TransactionSchemaUpdate } from "../../schemas/transactions/index.js";
+import { TransactionSchemaCreate, TransactionSchemaGetAll, TransactionSchemaGetAllQuery, TransactionSchemaGetByIdResponse, TransactionSchemaUpdate, TransactionSituationPatchSchema } from "../../schemas/transactions/index.js";
 import { MessageSchemaResponse } from "../../schemas/global/index.js";
 
 export const transactionsRoutes = async (app: FastifyInstance) => {
@@ -109,6 +109,28 @@ export const transactionsRoutes = async (app: FastifyInstance) => {
     },
     handler: async (request, reply) => {
       return await transactionsControllers.delete(request, reply)
+    },
+  });
+
+  app.withTypeProvider<ZodTypeProvider>().route({
+    method: "PATCH",
+    url: "/:id/situation",
+    onRequest: [app.authenticate],
+    schema: {
+      operationId: "patchTransactionSituation",
+      tags: ["Transação"],
+      summary: "Atualizar situação da transação",
+      body: TransactionSituationPatchSchema,
+      response: {
+        200: MessageSchemaResponse,
+        400: ErrorSchema,
+        401: ErrorSchema,
+        404: ErrorSchema,
+        500: ErrorSchema,
+      },
+    },
+    handler: async (request, reply) => {
+      return await transactionsControllers.patchSituation(request, reply)
     },
   });
 }
