@@ -31,3 +31,12 @@ export const toDate = (val: Date | string | null | undefined): Date => {
   }
   return new Date();
 };
+
+export const toCurrency = (value: number | string) => {
+  const num = typeof value === "string" ? parseFloat(value) : value;
+  if (isNaN(num)) return "R$ 0,00";
+  return num.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
+}

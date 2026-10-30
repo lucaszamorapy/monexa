@@ -7,6 +7,7 @@ import {
   ITransaction,
   IUpdateTransactionBody,
 } from "@/app/utils/types/transactions";
+import { revalidateTag } from "next/cache";
 
 export const getAllTransactionsByFilter = async (filter: IGetAllTransactionsByFilterBody): Promise<ITransaction[]> => {
   const api = new Request("transactions", {
@@ -22,6 +23,7 @@ export const createTransaction = async (
 ): Promise<{ message: string }> => {
   const api = new Request("transactions", { body });
   const res = await api.post<{ message: string }>();
+  revalidateTag("transactions", { expire: 0 });
   return res;
 };
 
@@ -31,6 +33,7 @@ export const updateTransaction = async (
 ): Promise<{ message: string }> => {
   const api = new Request(`transactions/${id}`, { body });
   const res = await api.put<{ message: string }>();
+  revalidateTag("transactions", { expire: 0 });
   return res;
 };
 
