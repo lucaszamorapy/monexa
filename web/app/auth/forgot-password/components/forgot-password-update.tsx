@@ -56,9 +56,11 @@ const ForgotPasswordUpdate = ({
       toast.success(res.message);
       router.push("/auth/login");
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Ocorreu um erro inesperado. Tente novamente.",
+      );
     }
   };
 

@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import TransactionForm from "./transaction-form";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
+import TransactionDelete from "./transaction-delete";
+import TransactionUpdateSituation from "./transaction-update-situation";
 
 // Use `accessor` for data columns and `display` for columns without one.
 const columnHelper = createColumnHelper<DataTableFeatures, ITransaction>();
@@ -86,10 +88,19 @@ export const transactionColumns = columnHelper.columns([
   columnHelper.display({
     id: "actions",
     header: "Ações",
-    size: 50,
+    size: 80,
     cell: ({ row }) => {
-      const { transactionId } = row.original;
-      return <TransactionForm transactionId={transactionId} />;
+      const { transactionId, situation } = row.original;
+      return (
+        <div className="flex items-center justify-center">
+          <TransactionForm transactionId={transactionId} />
+          <TransactionDelete transactionId={transactionId} />
+          <TransactionUpdateSituation
+            transactionId={transactionId}
+            situation={situation}
+          />
+        </div>
+      );
     },
   }),
 ]);

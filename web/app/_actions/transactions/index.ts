@@ -44,3 +44,22 @@ export const getTransactionById = async (
   const res = await api.get<ITransaction>();
   return res;
 };
+
+export const deleteTransaction = async (
+  id: string
+): Promise<{ message: string }> => {
+  const api = new Request(`transactions/${id}`);
+  const res = await api.delete<{ message: string }>();
+  revalidateTag("transactions", { expire: 0 });
+  return res;
+};
+
+export const updateTrasactionSituation = async (
+  id: string,
+  body: { situation: string }
+): Promise<{ message: string }> => {
+  const api = new Request(`transactions/${id}/situation`, { body });
+  const res = await api.patch<{ message: string }>();
+  revalidateTag("transactions", { expire: 0 });
+  return res;
+};

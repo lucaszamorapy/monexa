@@ -46,9 +46,11 @@ const ForgotPasswordEmailForm = ({
       setUserEmail(data.email);
       nextStep();
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Ocorreu um erro inesperado. Tente novamente.",
+      );
     }
   };
 

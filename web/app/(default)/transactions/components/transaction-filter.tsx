@@ -17,17 +17,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
+  SelectClearable,
   SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { FilterIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -96,10 +93,6 @@ const TransactionFilter = () => {
 
   const { reset } = form;
 
-  useEffect(() => {
-    return () => reset();
-  }, [reset]);
-
   const onSubmit = (data: FilterFormValues) => {
     const params = new URLSearchParams();
 
@@ -114,7 +107,15 @@ const TransactionFilter = () => {
   };
 
   const onClear = () => {
-    reset();
+    reset({
+      dateInitial: null,
+      dateFinal: null,
+      type: null,
+      category: null,
+      situation: null,
+      paymentMethod: null,
+      description: null,
+    });
     router.push(pathname);
   };
 
@@ -134,17 +135,14 @@ const TransactionFilter = () => {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="type">Tipo</FieldLabel>
-                    <Select
+                    <SelectClearable
                       value={field.value ?? ""}
                       onValueChange={(v) => field.onChange(v === "" ? null : v)}
+                      id="type"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Selecione o tipo"
+                      onClear={() => field.onChange(null)}
                     >
-                      <SelectTrigger
-                        id="type"
-                        aria-invalid={fieldState.invalid}
-                        className="w-full"
-                      >
-                        <SelectValue placeholder="Selecione o tipo" />
-                      </SelectTrigger>
                       <SelectContent>
                         {TRANSACTION_TYPES.map((t) => (
                           <SelectItem key={t} value={t}>
@@ -152,7 +150,7 @@ const TransactionFilter = () => {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                    </Select>
+                    </SelectClearable>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -166,17 +164,14 @@ const TransactionFilter = () => {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="category">Categoria</FieldLabel>
-                    <Select
+                    <SelectClearable
                       value={field.value ?? ""}
                       onValueChange={(v) => field.onChange(v === "" ? null : v)}
+                      id="category"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Selecione a categoria"
+                      onClear={() => field.onChange(null)}
                     >
-                      <SelectTrigger
-                        id="category"
-                        aria-invalid={fieldState.invalid}
-                        className="w-full"
-                      >
-                        <SelectValue placeholder="Selecione a categoria" />
-                      </SelectTrigger>
                       <SelectContent>
                         {TRANSACTION_CATEGORIES.map((c) => (
                           <SelectItem key={c} value={c}>
@@ -184,7 +179,7 @@ const TransactionFilter = () => {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                    </Select>
+                    </SelectClearable>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -198,17 +193,14 @@ const TransactionFilter = () => {
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor="situation">Situação</FieldLabel>
-                    <Select
+                    <SelectClearable
                       value={field.value ?? ""}
                       onValueChange={(v) => field.onChange(v === "" ? null : v)}
+                      id="situation"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Selecione a situação"
+                      onClear={() => field.onChange(null)}
                     >
-                      <SelectTrigger
-                        id="situation"
-                        aria-invalid={fieldState.invalid}
-                        className="w-full"
-                      >
-                        <SelectValue placeholder="Selecione a situação" />
-                      </SelectTrigger>
                       <SelectContent>
                         {TRANSACTION_SITUATIONS.map((s) => (
                           <SelectItem key={s} value={s}>
@@ -216,7 +208,7 @@ const TransactionFilter = () => {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                    </Select>
+                    </SelectClearable>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -231,17 +223,14 @@ const TransactionFilter = () => {
                     <FieldLabel htmlFor="paymentMethod">
                       Método de pagamento
                     </FieldLabel>
-                    <Select
+                    <SelectClearable
                       value={field.value ?? ""}
                       onValueChange={(v) => field.onChange(v === "" ? null : v)}
+                      id="paymentMethod"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Selecione o método de pagamento"
+                      onClear={() => field.onChange(null)}
                     >
-                      <SelectTrigger
-                        id="paymentMethod"
-                        aria-invalid={fieldState.invalid}
-                        className="w-full"
-                      >
-                        <SelectValue placeholder="Selecione o método" />
-                      </SelectTrigger>
                       <SelectContent>
                         {TRANSACTION_PAYMENT_METHODS.map((p) => (
                           <SelectItem key={p} value={p}>
@@ -249,7 +238,7 @@ const TransactionFilter = () => {
                           </SelectItem>
                         ))}
                       </SelectContent>
-                    </Select>
+                    </SelectClearable>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

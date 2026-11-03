@@ -42,7 +42,39 @@ export class TransactionsService {
         children: true,
       }
     });
-    return transactions;
+    return this.groupByFather(transactions);
+  }
+
+  private groupByFather(transactions: ITransaction[]): ITransaction[] {
+    // 1. Agrupa pelo id do pai (ou pelo próprio id, se for um pai/avulsa)
+    const groups = new Map<string, ITransaction[]>();
+
+    for (const transaction of transactions) {
+      const groupKey = transaction.transactionFatherId ?? transaction.transactionId;
+      const group = groups.get(groupKey);
+
+      if (group) {
+        group.push(transaction);
+      } else {
+        groups.set(groupKey, [transaction]);
+      }
+    }
+
+    // 2. Dentro de cada grupo: pai primeiro, depois filhos por parcela
+    const sortedGroups = Array.from(groups.values()).map((group) =>
+      group.sort((a, b) => {
+        const aIsFather = a.transactionFatherId === null ? 0 : 1;
+        const bIsFather = b.transactionFatherId === null ? 0 : 1;
+
+        if (aIsFather !== bIsFather) return aIsFather - bIsFather;
+        return (a.installmentNumber ?? 0) - (b.installmentNumber ?? 0);
+      }),
+    );
+
+    // 3. Ordena os grupos pela data do pai (ou do primeiro item, se o pai não veio no filtro)
+    sortedGroups.sort((a, b) => b[0].date.getTime() - a[0].date.getTime());
+
+    return sortedGroups.flat();
   }
   async getTransactionById(transactionId: string): Promise<ITransaction> {
     const transaction = await prisma.transactions.findFirst({

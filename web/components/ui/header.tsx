@@ -4,8 +4,11 @@ import { auth, signOut } from "@/auth";
 import Image from "next/image";
 import Link from "next/link";
 import { ROUTES } from "@/app/utils/lists/global";
+import { connection } from "next/server";
 
 const Header = async () => {
+  await connection(); //connection() é um sinal de “espere uma requisição real antes de continuar”, usado para suprir o erro do next em relação à
+  //Next.js encountered the unstable value crypto.getRandomValues() while prerendering. This value can change between renders, so it must be either prerendered or computed later.
   const session = await auth();
   const user = session?.user;
 
