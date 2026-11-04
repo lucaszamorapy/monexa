@@ -1,14 +1,13 @@
+import { SearchParams } from "@/app/utils/types/global";
+import Loader from "@/components/ui/loader";
 import { Suspense } from "react";
-import DashboardContent from "./components/dashboard-content";
-import DashboardSkeleton from "@/components/ui/dashboard-skeleton";
+import HomeContent from "./components/home-content";
 
-const HomePage = () => {
+const HomePage = ({ searchParams }: { searchParams: SearchParams }) => {
   return (
-    <>
-      <Suspense fallback={<DashboardSkeleton />}>
-        <DashboardContent />
-      </Suspense>
-    </>
+    <Suspense fallback={<Loader />}>
+      <HomeContent searchParams={searchParams} />
+    </Suspense>
   );
 };
 

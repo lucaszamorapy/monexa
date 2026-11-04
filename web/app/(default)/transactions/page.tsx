@@ -1,24 +1,9 @@
 import TransactionForm from "./components/transaction-form";
 import { Suspense } from "react";
 import Loader from "@/components/ui/loader";
-import {
-  TransactionCategory,
-  TransactionPaymentMethod,
-  TransactionSituation,
-  TransactionType,
-} from "@/app/utils/types/transactions";
 import TransactionFilter from "./components/transaction-filter";
 import TransactionList from "./components/transaction-list";
-
-export type SearchParams = Promise<{
-  dateInitial?: string | null;
-  dateFinal?: string | null;
-  type?: TransactionType | null;
-  category?: TransactionCategory | null;
-  paymentMethod?: TransactionPaymentMethod | null;
-  situation?: TransactionSituation | null;
-  description?: string | null;
-}>;
+import { SearchParams } from "@/app/utils/types/global";
 
 const TransactionsPage = ({ searchParams }: { searchParams: SearchParams }) => {
   return (

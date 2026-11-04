@@ -1,5 +1,5 @@
 import { getAllTransactionsByFilter } from "@/app/_actions/transactions";
-import { SearchParams } from "../page";
+import { SearchParams } from "@/app/utils/types/global";
 import { ITransaction } from "@/app/utils/types/transactions";
 import { DataTable } from "@/components/ui/data-table";
 import { transactionColumns } from "./transaction-columns";

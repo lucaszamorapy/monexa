@@ -25,6 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { FilterIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 
@@ -78,17 +79,21 @@ const TransactionFilter = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const form = useForm<FilterFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
+  const defaultValues = useMemo(() => {
+    return {
       dateInitial: searchParams.get("dateInitial"),
       dateFinal: searchParams.get("dateFinal"),
-      type: searchParams.get("type") ?? null,
-      category: searchParams.get("category") ?? null,
-      situation: searchParams.get("situation") ?? null,
-      paymentMethod: searchParams.get("paymentMethod") ?? null,
+      type: searchParams.get("type"),
+      category: searchParams.get("category"),
+      situation: searchParams.get("situation"),
+      paymentMethod: searchParams.get("paymentMethod"),
       description: searchParams.get("description"),
-    },
+    };
+  }, [searchParams]);
+
+  const form = useForm<FilterFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues,
   });
 
   const { reset } = form;
@@ -118,6 +123,10 @@ const TransactionFilter = () => {
     });
     router.push(pathname);
   };
+
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset]);
 
   return (
     <Card>
@@ -247,68 +256,77 @@ const TransactionFilter = () => {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Controller
-                name="dateInitial"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="dateInitial">Data inicial</FieldLabel>
-                    <DatePicker
-                      {...field}
-                      id="dateInitial"
-                      onChange={(date) =>
-                        field.onChange(date ? format(date, "yyyy-MM-dd") : null)
-                      }
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="flex items-center gap-4">
+                <Controller
+                  name="dateInitial"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="dateInitial">
+                        Data inicial
+                      </FieldLabel>
+                      <DatePicker
+                        {...field}
+                        id="dateInitial"
+                        onChange={(date) =>
+                          field.onChange(
+                            date ? format(date, "yyyy-MM-dd") : null,
+                          )
+                        }
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
 
-              <Controller
-                name="dateFinal"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="dateFinal">Data final</FieldLabel>
-                    <DatePicker
-                      {...field}
-                      onChange={(date) =>
-                        field.onChange(date ? format(date, "yyyy-MM-dd") : null)
-                      }
-                      id="dateFinal"
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="description">Descrição</FieldLabel>
-                    <Input
-                      {...field}
-                      id="description"
-                      placeholder="Buscar por descrição (opcional)"
-                      value={field.value ?? ""}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+                <Controller
+                  name="dateFinal"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="dateFinal">Data final</FieldLabel>
+                      <DatePicker
+                        {...field}
+                        onChange={(date) =>
+                          field.onChange(
+                            date ? format(date, "yyyy-MM-dd") : null,
+                          )
+                        }
+                        id="dateFinal"
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </div>
+              <div className="lg:col-span-3">
+                <Controller
+                  name="description"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="description">Descrição</FieldLabel>
+                      <Input
+                        {...field}
+                        id="description"
+                        placeholder="Buscar por descrição (opcional)"
+                        value={field.value ?? ""}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">

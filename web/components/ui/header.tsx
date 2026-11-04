@@ -55,12 +55,14 @@ const Header = async () => {
   return (
     <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-50">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        <Image
-          src={"/images/logo-prin-black.png"}
-          width={110}
-          height={110}
-          alt="Logo Monexa"
-        />
+        <Link href="/">
+          <Image
+            src={"/images/logo-prin-black.png"}
+            width={110}
+            height={110}
+            alt="Logo Monexa"
+          />
+        </Link>
 
         <ul className="hidden md:flex items-center gap-6">
           {ROUTES.map((r) => (
