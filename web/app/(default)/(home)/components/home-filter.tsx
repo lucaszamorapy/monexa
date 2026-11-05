@@ -160,7 +160,7 @@ const HomeFilter = () => {
                 loading={form.formState.isSubmitting}
                 className="w-full sm:w-auto"
               >
-                <FilterIcon />
+                {!form.formState.isSubmitting && <FilterIcon />}
                 {form.formState.isSubmitting ? "Filtrando..." : "Filtrar"}
               </Button>
             </div>

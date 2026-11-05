@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { PencilIcon, PlusIcon } from "lucide-react";
+import { PencilIcon, PlusIcon, SaveIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -548,6 +548,7 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                 loading={form.formState.isSubmitting}
                 className="w-full"
               >
+                {!form.formState.isSubmitting && <SaveIcon />}
                 {form.formState.isSubmitting
                   ? transactionId
                     ? "Salvando alterações..."

@@ -100,7 +100,7 @@ const HomeCards = ({ transactions }: IHomeCardsProps) => {
     expenses.filter((t) => t.situation === "Pago"),
   );
 
-  const balanceWallet = totalInput - totalExpense;
+  const balanceWallet = totalInput - totalExpenseDone;
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
