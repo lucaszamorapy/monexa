@@ -41,7 +41,7 @@ const HomeContent = async ({
     const count = transactionsThisWeek.length;
 
     if (count === 0) {
-      return "Parabéns! Suas contas estão em dia.";
+      return "Parabéns! Suas contas estão pagas durante essa semana.";
     }
 
     return (
@@ -61,7 +61,7 @@ const HomeContent = async ({
   return (
     <div className="flex flex-col gap-4 p-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="flex gap-4 flex-col col-span-1">
+        <div className="flex flex-col col-span-1 justify-between">
           <div className="flex flex-col">
             <h2>Olá, {user?.name}!👋</h2>
             <span className="text-muted-foreground">{getSubtitle()}</span>

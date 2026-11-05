@@ -79,11 +79,13 @@ const HomeFilter = () => {
   }, [form, onSubmit]);
 
   const onClear = () => {
-    reset({
-      dateInitial: null,
-      dateFinal: null,
-    });
-    router.push(pathname);
+    const now = new Date();
+    const values = {
+      dateInitial: format(startOfMonth(now), "yyyy-MM-dd"),
+      dateFinal: format(endOfMonth(now), "yyyy-MM-dd"),
+    };
+    reset(values);
+    onSubmit(values);
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { IMessageOutputDto } from "../../dto/global/index.js";
 
 export const JWT_SECRET = process.env.JWT_SECRET as string;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN as
-  | "3h"
+  | "1h"
   | number;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET as string;
 const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN as
