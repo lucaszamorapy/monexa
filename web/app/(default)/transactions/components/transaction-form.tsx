@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { PencilIcon, PlusIcon, SaveIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -247,14 +246,14 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
     <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {transactionId ? (
-          <Button variant="ghost" size="icon-sm" title="Editar transação">
-            <PencilIcon size={14} />
-          </Button>
+          <Button
+            variant="ghost"
+            category="edit"
+            size="icon-sm"
+            title="Editar transação"
+          />
         ) : (
-          <Button>
-            <PlusIcon size={14} />
-            Transação
-          </Button>
+          <Button category="add">Transação</Button>
         )}
       </DialogTrigger>
 
@@ -547,8 +546,8 @@ const TransactionForm = ({ transactionId }: ITransactionFormProps) => {
                 type="submit"
                 loading={form.formState.isSubmitting}
                 className="w-full"
+                category="save"
               >
-                {!form.formState.isSubmitting && <SaveIcon />}
                 {form.formState.isSubmitting
                   ? transactionId
                     ? "Salvando alterações..."

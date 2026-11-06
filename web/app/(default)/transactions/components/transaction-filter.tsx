@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
-import { FilterIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -335,16 +334,16 @@ const TransactionFilter = () => {
                 variant="outline"
                 onClick={onClear}
                 className="w-full sm:w-auto"
+                category="filterClear"
               >
-                <XIcon />
                 Limpar filtros
               </Button>
               <Button
                 type="submit"
                 loading={form.formState.isSubmitting}
                 className="w-full sm:w-auto"
+                category="filter"
               >
-                {!form.formState.isSubmitting && <FilterIcon />}
                 {form.formState.isSubmitting ? "Filtrando..." : "Filtrar"}
               </Button>
             </div>

@@ -2,7 +2,17 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot } from "radix-ui";
-import { Loader2 } from "lucide-react";
+import {
+  Filter,
+  FilterXIcon,
+  Loader2,
+  LucideIcon,
+  PencilIcon,
+  PlusIcon,
+  Save,
+  TrashIcon,
+  X,
+} from "lucide-react";
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-none border border-transparent bg-clip-padding text-xs font-semibold tracking-widest whitespace-nowrap uppercase transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
@@ -39,12 +49,23 @@ const buttonVariants = cva(
   },
 );
 
+const categoryIcons: Record<string, LucideIcon> = {
+  save: Save,
+  filter: Filter,
+  close: X,
+  filterClear: FilterXIcon,
+  add: PlusIcon,
+  edit: PencilIcon,
+  delete: TrashIcon,
+};
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   loading = false,
+  category,
   disabled,
   children,
   ...props
@@ -52,8 +73,17 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     loading?: boolean;
+    category?:
+      | "save"
+      | "filter"
+      | "close"
+      | "filterClear"
+      | "add"
+      | "edit"
+      | "delete";
   }) {
   const Comp = asChild ? Slot.Root : "button";
+  const CategoryIcon = category ? categoryIcons[category] : null;
 
   return (
     <Comp
@@ -71,6 +101,9 @@ function Button({
       ) : (
         <>
           {loading && <Loader2 className="animate-spin" aria-hidden="true" />}
+          {!loading && CategoryIcon && (
+            <CategoryIcon data-icon="inline-start" aria-hidden="true" />
+          )}
           {children}
         </>
       )}

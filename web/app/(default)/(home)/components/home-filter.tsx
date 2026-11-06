@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { endOfMonth, format, startOfMonth } from "date-fns";
-import { FilterIcon, XIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -151,16 +150,16 @@ const HomeFilter = () => {
                 variant="outline"
                 onClick={onClear}
                 className="w-full sm:w-auto"
+                category="filterClear"
               >
-                <XIcon />
                 Limpar filtros
               </Button>
               <Button
                 type="submit"
                 loading={form.formState.isSubmitting}
                 className="w-full sm:w-auto"
+                category="filter"
               >
-                {!form.formState.isSubmitting && <FilterIcon />}
                 {form.formState.isSubmitting ? "Filtrando..." : "Filtrar"}
               </Button>
             </div>

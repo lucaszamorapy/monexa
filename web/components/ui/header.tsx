@@ -45,9 +45,8 @@ const Header = async () => {
 
   const signOutForm = (
     <form action={handleSignOut}>
-      <Button variant="outline" type="submit" className="gap-1.5">
+      <Button variant="ghost" type="submit" title="Sair do sistema">
         <LogOut />
-        Sair
       </Button>
     </form>
   );

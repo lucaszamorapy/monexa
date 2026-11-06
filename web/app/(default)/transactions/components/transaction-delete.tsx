@@ -11,7 +11,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface ITransactionDeleteProps {
@@ -34,9 +33,12 @@ const TransactionDelete = ({ transactionId }: ITransactionDeleteProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon-sm" title="Excluir transação">
-          <TrashIcon size={14} />
-        </Button>
+        <Button
+          variant="ghost"
+          category="delete"
+          size="icon-sm"
+          title="Excluir transação"
+        />
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
