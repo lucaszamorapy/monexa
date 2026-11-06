@@ -1,10 +1,16 @@
 import { getAllTransactionsByFilter } from "@/app/_actions/transactions";
 import { SearchParams } from "@/app/utils/types/global";
-import { ITransaction } from "@/app/utils/types/transactions";
 import { auth } from "@/auth";
 import HomeFilter from "./home-filter";
 import HomeCards from "./home-cards";
-import { endOfWeek, format, startOfWeek } from "date-fns";
+import {
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+} from "date-fns";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -16,8 +22,25 @@ const HomeContent = async ({
   const session = await auth();
   const user = session?.user;
   const filters = await searchParams;
-  const transactions: ITransaction[] =
-    await getAllTransactionsByFilter(filters);
+
+  const getPreviousFilters = () => {
+    const initial = filters.dateInitial
+      ? new Date(`${filters.dateInitial}T00:00:00`)
+      : startOfMonth(new Date());
+
+    const previousMonth = subMonths(initial, 1);
+
+    return {
+      ...filters,
+      dateInitial: format(startOfMonth(previousMonth), "yyyy-MM-dd"),
+      dateFinal: format(endOfMonth(previousMonth), "yyyy-MM-dd"),
+    };
+  };
+
+  const [transactions, previousTransactions] = await Promise.all([
+    getAllTransactionsByFilter(filters),
+    getAllTransactionsByFilter(getPreviousFilters()),
+  ]);
 
   const getSubtitle = (): ReactNode => {
     if (transactions.length === 0) {
@@ -69,7 +92,10 @@ const HomeContent = async ({
           <HomeFilter />
         </div>
         <div className="lg:col-span-2">
-          <HomeCards transactions={transactions} />
+          <HomeCards
+            transactions={transactions}
+            previousTransactions={previousTransactions}
+          />
         </div>
       </div>
     </div>

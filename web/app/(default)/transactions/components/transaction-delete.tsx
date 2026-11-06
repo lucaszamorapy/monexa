@@ -49,8 +49,14 @@ const TransactionDelete = ({ transactionId }: ITransactionDeleteProps) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onDelete}>Sim, excluir</AlertDialogAction>
+          <AlertDialogCancel asChild>
+            <Button variant="outline" category="close">
+              Cancelar
+            </Button>
+          </AlertDialogCancel>
+          <AlertDialogAction asChild onClick={onDelete}>
+            <Button category="delete">Sim, excluir</Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
