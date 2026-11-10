@@ -13,6 +13,7 @@ import {
 } from "date-fns";
 import Link from "next/link";
 import { ReactNode } from "react";
+import HomeCharts from "./home-charts";
 
 const HomeContent = async ({
   searchParams,
@@ -98,6 +99,7 @@ const HomeContent = async ({
           />
         </div>
       </div>
+      <HomeCharts transactions={transactions} />
     </div>
   );
 };
