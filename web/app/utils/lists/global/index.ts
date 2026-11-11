@@ -27,4 +27,5 @@ export const CHART_COLORS: Record<string, string> = {
   sky: "#0ea5e9",
   emerald: "#10b981",
   purple: "#a855f7",
+  teal: "#0096A4"
 };

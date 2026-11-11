@@ -1,3 +1,6 @@
+"use client";
+
+import { toCurrency } from "@/app/utils/functions/global";
 import { CHART_COLORS } from "@/app/utils/lists/global";
 import {
   TRANSACTION_CATEGORIES,
@@ -23,7 +26,7 @@ interface ICategoryCharts {
   transactions: ITransaction[];
 }
 
-const CategoryCharts = ({ transactions }: ICategoryCharts) => {
+const CategoryChart = ({ transactions }: ICategoryCharts) => {
   const categories = Object.keys(
     TRANSACTION_CATEGORY_CONFIG,
   ) as TransactionCategory[];
@@ -41,20 +44,28 @@ const CategoryCharts = ({ transactions }: ICategoryCharts) => {
     }),
   ) satisfies ChartConfig;
 
+  const sumCategoryAmount = (category: TransactionCategory) => {
+    const transactionsCategory = transactions.filter(
+      (t) => t.category === category,
+    );
+    const val = transactionsCategory.reduce((acc, t) => (acc += t.amount), 0);
+    return val;
+  };
+
   const categoryTotals = TRANSACTION_CATEGORIES.map((category) => ({
     category: category,
-    total: transactions.filter((t) => t.category === category).length,
+    total: sumCategoryAmount(category),
     fill: CHART_COLORS[TRANSACTION_CATEGORY_CONFIG[category].color],
   }));
 
   return (
-    <Card className="flex flex-col w-80">
+    <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Categorias</CardTitle>
+        <CardTitle>🍕 Categorias</CardTitle>
         <CardDescription>
           <span>
-            Confira abaixo quais categorias foram mais gastas a partir de{" "}
-            {format(new Date(), "MMM. yyyy", { locale: ptBR })}
+            Confira abaixo quais categorias tiveram mais valor investido a
+            partir de {format(new Date(), "MMM. yyyy", { locale: ptBR })}
           </span>
         </CardDescription>
       </CardHeader>
@@ -64,10 +75,11 @@ const CategoryCharts = ({ transactions }: ICategoryCharts) => {
           chartConfig={chartDataConfig}
           dataKey={"total"}
           nameKey="category"
+          valueFormatter={toCurrency}
         />
       </CardContent>
     </Card>
   );
 };
 
-export default CategoryCharts;
+export default CategoryChart;

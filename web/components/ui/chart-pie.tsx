@@ -17,13 +17,16 @@ interface IChartPieProps {
   chartConfig: ChartConfig;
   dataKey: string;
   nameKey: string;
+  valueFormatter?: (value: number) => string;
 }
+
 const ChartPie = ({
   className,
   chartData,
   chartConfig,
   dataKey,
   nameKey,
+  valueFormatter,
 }: IChartPieProps) => {
   return (
     <ChartContainer
@@ -34,6 +37,14 @@ const ChartPie = ({
         <ChartTooltip
           cursor={false}
           content={<ChartTooltipContent hideLabel />}
+          formatter={(value, name) => (
+            <div className="flex w-full items-center justify-between gap-2">
+              <span>{name}</span>
+              <span>
+                {valueFormatter ? valueFormatter(Number(value)) : String(value)}
+              </span>
+            </div>
+          )}
         />
         <Pie data={chartData} dataKey={dataKey} nameKey={nameKey} />
       </PieChart>
